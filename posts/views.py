@@ -83,6 +83,19 @@ def your_feed(request):
     
     return render(request, 'your_feed.html', {'posts': posts})
 
+@login_required
+def delete_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id, user=request.user)
+    print("Deleting post with ID:", post_id)
+    if request.method == 'GET':
+        post.delete()
+        messages.success(request, "Post deleted successfully.")
+        print("Post deleted successfully:", post_id)
+    else:
+        messages.error(request, "Invalid request method.")
+    
+    return redirect('posts:your_feed')  # Always redirect
+
 
 # @login_required
 # @require_POST
