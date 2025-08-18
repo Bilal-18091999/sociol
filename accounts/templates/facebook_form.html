@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+
+    <style>
+        .config-card {
+            max-width: 600px;
+            margin: 80px auto 50px;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        .form-label {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        .input-group {
+            position: relative;
+        }
+        .toggle-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            color: #6c757d;
+            cursor: pointer;
+            z-index: 5;
+        }
+        .toggle-icon:hover {
+            color: #495057;
+        }
+        .btn-submit {
+            background-color: #1877f2; /* Facebook blue */
+            padding: 10px 24px;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+        .btn-submit:hover {
+            background-color: #166fe5;
+        }
+    </style>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-10 col-lg-8">
+                <div class="config-card bg-white">
+                    <h2 class="text-center mb-4">Facebook And Instagram Configuration</h2>
+                    
+                    <form method="post" class="needs-validation" novalidate>
+                        {% csrf_token %}
+
+                        <div class="mb-4">
+                            <label for="page_id" class="form-label">FB Page ID</label>
+                            <input type="text" class="form-control form-control-lg" id="page_id" name="page_id" 
+                                   value="{{ facebook_form.page_id.value|default:'' }}" required>
+                            <div class="invalid-feedback">
+                                Please provide a valid Page ID.
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="user_id" class="form-label">Instagram User ID</label>
+                            <input type="text" class="form-control form-control-lg" id="user_id" name="user_id" 
+                                   value="{{ facebook_form.user_id.value|default:'' }}" required>
+                            <div class="invalid-feedback">
+                                Please provide a valid User ID.
+                            </div>
+                        </div>
+
+                        <div class="mb-4 position-relative">
+                            <label for="access_token" class="form-label">Token</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control form-control-lg pe-5" id="access_token" 
+                                       name="access_token" value="{{ facebook_form.access_token.value|default:'' }}" required>
+                                <button type="button" class="toggle-icon" onclick="toggleToken()" aria-label="Toggle token visibility">
+                                    <i id="eye-icon" class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <div class="invalid-feedback">
+                                Please provide a valid access token.
+                            </div>
+                        </div>
+
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-submit text-white">
+                                <i class="fas fa-save me-2"></i>Save Configuration
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+    <!-- Font Awesome (updated version) -->
+    <script src="https://kit.fontawesome.com/f7c860d8e5.js" crossorigin="anonymous"></script>
+
+    <script>
+        function toggleToken() {
+            const tokenField = document.getElementById("access_token");
+            const eyeIcon = document.getElementById("eye-icon");
+            
+            if (tokenField.type === "password") {
+                tokenField.type = "text";
+                eyeIcon.classList.replace("fa-eye", "fa-eye-slash");
+            } else {
+                tokenField.type = "password";
+                eyeIcon.classList.replace("fa-eye-slash", "fa-eye");
+            }
+        }
+
+        // Form validation
+        (function() {
+            'use strict';
+            const forms = document.querySelectorAll('.needs-validation');
+            
+            Array.from(forms).forEach(function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        })();
+    </script>
+{% endblock %}

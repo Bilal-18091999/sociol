@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+{% block title %}Friends - Socio{% endblock %}
+{% block content %}
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+
+        .notification-item {
+            transition: all 0.2s ease;
+        }
+
+        .notification-item:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .unread-notification {
+            background-color: #f0f7ff;
+        }
+
+        .filter-btn {
+            transition: all 0.2s ease;
+        }
+
+        .filter-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .action-btn {
+            transition: all 0.15s ease;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.05);
+        }
+              .header-actions {
+    display: flex
+;
+    align-items
+: center;
+   gap: 1px; 
+}
+    </style>
+
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <div class="flex flex-col space-y-6">
+            <!-- Header -->
+            <div class="flex flex-col space-y-2">
+                <h1 class="text-3xl font-bold text-slate-800">Notifications</h1>
+                <p class="text-slate-500">Stay updated with your latest activities</p>
+            </div>
+
+            <!-- Filter and Actions -->
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div class="flex space-x-2">
+                    <a href="{% url 'notifications:notifications_view' %}?filter=all"
+                       class="filter-btn px-4 py-2 rounded-lg text-sm font-medium {% if filter_type == 'all' %}bg-blue-600 text-white shadow-md{% else %}bg-white text-slate-700 border border-slate-200 hover:bg-slate-50{% endif %}">
+                        All
+                    </a>
+                    <a href="{% url 'notifications:notifications_view' %}?filter=unread"
+                       class="filter-btn px-4 py-2 rounded-lg text-sm font-medium {% if filter_type == 'unread' %}bg-blue-600 text-white shadow-md{% else %}bg-white text-slate-700 border border-slate-200 hover:bg-slate-50{% endif %}">
+                        Unread ({{ unread_count }})
+                    </a>
+                </div>
+
+                {% if unread_count > 0 %}
+                <button id="mark-all-read-btn" 
+                        class="action-btn px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-700 shadow-md hover:shadow-lg transition-all">
+                    Mark All as Read
+                </button>
+                {% endif %}
+            </div>
+
+            <!-- Notifications List -->
+            <div class="space-y-3">
+                {% if notifications %}
+                    {% for notification in notifications %}
+                    <div id="notification-{{ notification.id }}"
+                         class="notification-item bg-white p-4 rounded-xl shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 {% if not notification.is_read %}unread-notification border-l-4 border-blue-500{% else %}border-l-4 border-transparent{% endif %}">
+
+                        <div class="flex-grow flex items-center gap-2">
+                            {% if not notification.is_read %}
+                            <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                            {% endif %}
+                            <div>
+                                <p class="text-slate-800 {% if not notification.is_read %}font-medium{% else %}font-normal{% endif %}">
+                                    {{ notification.content }}
+                                </p>
+                                <p class="text-xs text-slate-500 mt-1">
+                                    <i class="far fa-clock mr-1"></i> {{ notification.created_at|timesince }} ago
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center space-x-2 self-end sm:self-auto">
+                            {% if not notification.is_read %}
+                            <button data-notification-id="{{ notification.id }}"
+                                    class="mark-read-btn action-btn px-3 py-1 text-xs bg-blue-100 text-blue-700 rounded-full hover:bg-blue-200 font-medium">
+                                Mark as Read
+                            </button>
+                            {% endif %}
+                            {% if notification.get_absolute_url != '#' %}
+                            <a href="{{ notification.get_absolute_url }}"
+                               class="action-btn px-3 py-1 text-xs bg-slate-100 text-slate-700 rounded-full hover:bg-slate-200 font-medium">
+                                View
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center py-12">
+                        <div class="mx-auto w-24 h-24 bg-slate-100 rounded-full flex items-center justify-center mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-medium text-slate-700 mb-1">No notifications</h3>
+                        <p class="text-slate-500 text-sm">You're all caught up!</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- CSRF Token for AJAX -->
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+    <!-- Font Awesome for icons -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+
+            // Mark single notification as read
+            document.querySelectorAll('.mark-read-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const notificationId = this.dataset.notificationId;
+                    const notificationDiv = document.getElementById(`notification-${notificationId}`);
+
+                    // Optimistic UI update
+                    notificationDiv.classList.remove('unread-notification', 'border-l-4', 'border-blue-500');
+                    const contentP = notificationDiv.querySelector('p:first-child');
+                    if (contentP) contentP.classList.remove('font-medium');
+                    const dot = notificationDiv.querySelector('.w-2.h-2.bg-blue-500');
+                    if (dot) dot.remove();
+                    this.remove();
+
+                    // Update unread count
+                    const unreadCountLink = document.querySelector('a[href*="filter=unread"]');
+                    if (unreadCountLink) {
+                        const currentText = unreadCountLink.textContent;
+                        const countMatch = currentText.match(/\((\d+)\)/);
+                        if (countMatch) {
+                            let currentCount = parseInt(countMatch[1]);
+                            currentCount--;
+                            unreadCountLink.textContent = `Unread (${currentCount})`;
+
+                            if (currentCount === 0) {
+                                document.getElementById('mark-all-read-btn')?.remove();
+                            }
+                        }
+                    }
+
+                    // API call
+                    fetch(`/notifications/mark-read/${notificationId}/`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': csrfToken,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({})
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!data.success) {
+                            console.error('Failed to mark as read:', data.error);
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+                });
+            });
+
+            // Mark all notifications as read
+            const markAllReadBtn = document.getElementById('mark-all-read-btn');
+            if (markAllReadBtn) {
+                markAllReadBtn.addEventListener('click', function() {
+                    // Optimistic UI update
+                    document.querySelectorAll('.mark-read-btn').forEach(btn => btn.remove());
+                    document.querySelectorAll('.unread-notification').forEach(div => {
+                        div.classList.remove('unread-notification', 'border-l-4', 'border-blue-500');
+                        const contentP = div.querySelector('p:first-child');
+                        if (contentP) contentP.classList.remove('font-medium');
+                        const dot = div.querySelector('.w-2.h-2.bg-blue-500');
+                        if (dot) dot.remove();
+                    });
+
+                    // Update unread count
+                    const unreadCountLink = document.querySelector('a[href*="filter=unread"]');
+                    if (unreadCountLink) {
+                        unreadCountLink.textContent = `Unread (0)`;
+                    }
+
+                    this.remove();
+
+                    // API call
+                    fetch('/notifications/mark-all-read/', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': csrfToken,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({})
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!data.success) {
+                            console.error('Failed to mark all as read:', data.error);
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+                });
+            }
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Socio - Connect, Share, Discover</title>
+
+  <!-- Font Awesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f8f9fa;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .header h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #8b5cf6, #ec4899);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+
+    .header p {
+      color: #6b7280;
+      font-size: 1.1rem;
+    }
+
+    .auth-container {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      padding: 40px;
+      width: 100%;
+      max-width: 400px;
+      overflow: visible;
+      position: relative;
+    }
+
+    .auth-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .auth-header h2 {
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 8px;
+    }
+
+    .auth-header p {
+      color: #6b7280;
+      font-size: 0.95rem;
+    }
+
+    .tabs {
+      display: flex;
+      background-color: #f3f4f6;
+      border-radius: 8px;
+      padding: 4px;
+      margin-bottom: 32px;
+    }
+
+    .tab {
+      flex: 1;
+      padding: 12px 16px;
+      text-align: center;
+      border-radius: 6px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      background: none;
+      font-size: 0.95rem;
+    }
+
+    .tab.active {
+      background-color: white;
+      color: #1f2937;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .tab:not(.active) {
+      color: #6b7280;
+    }
+
+    .form-group {
+      margin-bottom: 24px;
+      transform: translateX(-10px);
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 500;
+      color: #374151;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #9ca3af;
+      font-size: 1rem;
+    }
+
+    .form-input {
+      width: calc(100% + 20px);
+      margin-left: -10px;
+      padding: 16px 16px 16px 44px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.2s ease;
+      background-color: #fafafa;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #8b5cf6;
+      background-color: white;
+    }
+
+    .form-input::placeholder {
+      color: #9ca3af;
+    }
+
+    .sign-in-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+      color: white;
+      border: none;
+      padding: 16px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-bottom: 32px;
+    }
+
+    .sign-in-btn:hover {
+      background: linear-gradient(135deg, #7c3aed, #6d28d9);
+      transform: translateY(-1px);
+    }
+
+    .divider {
+      text-align: center;
+      margin-bottom: 24px;
+      position: relative;
+    }
+
+    .divider::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background-color: #e5e7eb;
+    }
+
+    .divider span {
+      background-color: white;
+      color: #9ca3af;
+      padding: 0 16px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      position: relative;
+      z-index: 1;
+    }
+
+    .social-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .social-btn {
+      width: 48px;
+      height: 48px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .social-btn:hover {
+      border-color: #d1d5db;
+      transform: translateY(-1px);
+    }
+
+    .social-icon {
+      width: 20px;
+      height: 20px;
+      color: #6b7280;
+    }
+
+    .message {
+      text-align: center;
+      margin-top: 20px;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    .message.success {
+      background-color: #d1fae5;
+      color: #065f46;
+      border: 1px solid #10b981;
+    }
+
+    .message.error {
+      background-color: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #ef4444;
+    }
+
+    @media (max-width: 480px) {
+      .auth-container {
+        padding: 32px 24px;
+      }
+
+      .header h1 {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="header">
+    <h1>Welcome to Socio</h1>
+    <p>Connect, share, and discover amazing content</p>
+  </div>
+
+  <div class="auth-container">
+    <div class="auth-header">
+      <h2>Join Socio Today</h2>
+      <p>Sign in to your account or create a new one</p>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" id="signInTab">Sign In</button>
+      <button class="tab" id="signUpTab">Sign Up</button>
+    </div>
+
+    <!-- Sign In Form -->
+    <form method="post" action="{% url 'signin' %}" id="signInForm">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="email">Email</label>
+        <div class="input-wrapper">
+          <i class="fa-solid fa-envelope input-icon"></i>
+          <input type="email" name="email" class="form-input" placeholder=" Enter your email" required />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="input-wrapper">
+          <i class="fa-solid fa-lock input-icon"></i>
+          <input type="password" name="password" class="form-input" placeholder=" Enter your password" required />
+        </div>
+      </div>
+
+      <button type="submit" class="sign-in-btn">Sign In</button>
+    </form>
+
+    <!-- Sign Up Form -->
+    <form method="post" action="{% url 'signup' %}" id="signUpForm" style="display: none;">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="email">Email</label>
+        <div class="input-wrapper">
+          <i class="fa-solid fa-envelope input-icon"></i>
+          <input type="email" name="email" class="form-input" placeholder=" Enter your email" required />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="input-wrapper">
+          <i class="fa-solid fa-lock input-icon"></i>
+          <input type="password" name="password" class="form-input" placeholder=" Create a password" required />
+        </div>
+      </div>
+
+      <button type="submit" class="sign-in-btn">Sign Up</button>
+    </form>
+
+    <div class="divider">
+      <span>OR CONTINUE WITH</span>
+    </div>
+
+    <div class="social-buttons">
+      <button class="social-btn" title="Google Login">
+        <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor">
+          <path
+            d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 6.62 5.367 11.987 11.988 11.987s11.987-5.367 11.987-11.987C24.004 5.367 18.637.001 12.017.001zm0 21.5c-5.245 0-9.513-4.268-9.513-9.513s4.268-9.513 9.513-9.513 9.513 4.268 9.513 9.513-4.268 9.513-9.513 9.513z"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  {% if messages %}
+    {% for message in messages %}
+      <div class="message {% if message.tags %}{{ message.tags }}{% endif %}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <script>
+    const signInTab = document.getElementById("signInTab");
+    const signUpTab = document.getElementById("signUpTab");
+    const signInForm = document.getElementById("signInForm");
+    const signUpForm = document.getElementById("signUpForm");
+
+    signInTab.addEventListener("click", () => {
+      signInTab.classList.add("active");
+      signUpTab.classList.remove("active");
+      signInForm.style.display = "block";
+      signUpForm.style.display = "none";
+    });
+
+    signUpTab.addEventListener("click", () => {
+      signUpTab.classList.add("active");
+      signInTab.classList.remove("active");
+      signUpForm.style.display = "block";
+      signInForm.style.display = "none";
+    });
+  </script>
+</body>
+</html>

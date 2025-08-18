@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+{% block title %}Friends - Socio{% endblock %}
+{% block content %}
+
+<style>
+
+    .bg-red-500 {
+            --tw-bg-opacity: 1;
+            background-color: rgb(239 68 68 / var(--tw-bg-opacity, 1));
+            border-radius: 10px;
+            color: white;
+            text-decoration: none;
+            padding: 2px;
+            position: absolute;
+            font-size: 12px;
+        }
+.bg-red-500 {
+            position: absolute;
+            top: 4px;
+            right: 18px;
+            z-index: 10;
+        }
+
+    </style>
+
+
+<div class="container">
+    <div class="page-header">
+        <div class="page-icon">
+            <svg width="20" height="20" fill="white" viewBox="0 0 24 24">
+                <path d="M16 4c0-1.11.89-2 2-2s2 .89 2 2-.89 2-2 2-2-.89-2-2zM4 18v-4h3v4h2v-7.5c0-1.1.9-2 2-2s2 .9 2 2V18h2v-4h3v4h2V9.5c0-1.1-.9-2-2-2h-3V6c0-1.1-.9-2-2-2s-2 .9-2 2v1.5H8c-1.1 0-2 .9-2 2V18h2z"/>
+            </svg>
+        </div>
+        <h1 class="page-title">Friends</h1>
+    </div>
+    <p class="page-subtitle">Manage your connections and discover new people</p>
+    <div class="tabs">
+        <a href="#" class="tab {% if active_tab == 'friends' %}active{% endif %}" data-tab="friends">Friends ({{ friends|length }})</a>
+        <a href="#" class="tab {% if active_tab == 'requests' %}active{% endif %}" data-tab="requests">Requests ({{ received_requests|length }})</a>
+        <a href="#" class="tab {% if active_tab == 'sent' %}active{% endif %}" data-tab="sent">Sent ({{ sent_requests|length }})</a>
+        <a href="#" class="tab {% if active_tab == 'discover' %}active{% endif %}" data-tab="discover">Discover </a>
+    </div>
+    <div class="tab-content">
+        <!-- Friends Tab -->
+        <div id="friends" class="tab-pane {% if active_tab == 'friends' %}active{% endif %}">
+            <h2 class="discover-title">Your Friends</h2>
+            <div class="people-grid">
+                {% for user in friends %}
+                <div class="person-card">
+                    <div class="person-avatar">{{ user.username|first|upper }}</div>
+                    <div class="person-info">
+                        <div class="person-name">{{ user.username }}</div>
+                        <div class="person-email">@{{ user.mail }}</div>
+                    </div>
+                    <div class="status-badge" style="background:#10b981;">Friend</div>
+                </div>
+                {% empty %}
+                <p class="empty-state">You have no friends yet.</p>
+                {% endfor %}
+            </div>
+        </div>
+        <!-- Requests Tab -->
+        <div id="requests" class="tab-pane {% if active_tab == 'requests' %}active{% endif %}">
+            <h2 class="discover-title">Friend Requests</h2>
+            <div class="people-grid">
+                {% for user in received_requests %}
+                <div class="person-card">
+                    <div class="person-avatar">{{ user.username|first|upper }}</div>
+                    <div class="person-info">
+                        <div class="person-name">{{ user.username }}</div>
+                        <div class="person-email">@{{ user.mail }}</div>
+                    </div>
+                    <div class="button-group">
+                        <form method="post" action="{% url 'accept_request' user.id %}" class="tab-aware-form">
+                            {% csrf_token %}
+                            <input type="hidden" name="next_tab" class="current-tab-input" value="{{ active_tab }}">
+                            <button type="submit" class="add-friend-btn">Accept</button>
+                        </form>
+                        <form method="post" action="{% url 'reject_request' user.id %}" class="tab-aware-form">
+                            {% csrf_token %}
+                            <input type="hidden" name="next_tab" class="current-tab-input" value="{{ active_tab }}">
+                            <button type="submit" class="add-friend-btn reject-btn">Reject</button>
+                        </form>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="empty-state">No friend requests.</p>
+                {% endfor %}
+            </div>
+        </div>
+        <!-- Sent Tab -->
+        <div id="sent" class="tab-pane {% if active_tab == 'sent' %}active{% endif %}">
+            <h2 class="discover-title">Sent Requests</h2>
+            <div class="people-grid">
+                {% for user in sent_requests %}
+                <div class="person-card">
+                    <div class="person-avatar">{{ user.username|first|upper }}</div>
+                    <div class="person-info">
+                        <div class="person-name">{{ user.username }}</div>
+                        <div class="person-email">@{{ user.email }}</div>
+                    </div>
+                    <div class="status-badge" style="background:#f59e0b;">Request Sent</div>
+                </div>
+                {% empty %}
+                <p class="empty-state">No sent requests.</p>
+                {% endfor %}
+            </div>
+        </div>
+        <!-- Discover Tab -->
+        <div id="discover" class="tab-pane {% if active_tab == 'discover' %}active{% endif %}">
+            <h2 class="discover-title">Discover People</h2>
+            <input type="text" class="discover-search" placeholder="Search for people..." onkeyup="searchPeople(this)">
+            <div class="people-grid" id="discover-grid">
+                {% for user in discover_users %}
+                <div class="person-card" data-name="{{ user.username }}" data-username="{{ user.username }}">
+                    <div class="person-avatar">{{ user.username|first|upper }}</div>
+                    <div class="person-info">
+                        <div class="person-name">{{ user.username }}</div>
+                        <div class="person-email">@{{ user.email }}</div>
+                    </div>
+                    <form method="post" action="{% url 'send_request' user.id %}" class="tab-aware-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="next_tab" class="current-tab-input" value="{{ active_tab }}">
+                        <button type="submit" class="add-friend-btn">Add Friend</button>
+                    </form>
+                </div>
+                {% empty %}
+                <p class="empty-state">No users to discover.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const tabPanes = document.querySelectorAll('.tab-pane');
+        const tabLinks = document.querySelectorAll('.tab');
+        const currentTabInputs = document.querySelectorAll('.current-tab-input');
+
+        function updateHiddenTabInputs(activeTabName) {
+            currentTabInputs.forEach(input => {
+                input.value = activeTabName;
+            });
+        }
+
+        function activateTab(tabName) {
+            // Remove active class from all tabs
+            tabLinks.forEach(tab => {
+                tab.classList.remove('active');
+            });
+            // Hide all tab panes
+            tabPanes.forEach(pane => {
+                pane.classList.remove('active');
+            });
+
+            // Add active class to clicked tab
+            const activeTabLink = document.querySelector(`[data-tab="${tabName}"]`);
+            if (activeTabLink) {
+                activeTabLink.classList.add('active');
+            }
+            // Show corresponding tab pane
+            const activePane = document.getElementById(tabName);
+            if (activePane) {
+                activePane.classList.add('active');
+            }
+
+            // Update URL to reflect the active tab
+            const url = new URL(window.location);
+            url.searchParams.set('tab', tabName);
+            history.pushState({}, '', url);
+
+            // Update hidden inputs in forms
+            updateHiddenTabInputs(tabName);
+        }
+
+        // Get initial tab from URL or default to 'friends'
+        const urlParams = new URLSearchParams(window.location.search);
+        const initialTab = urlParams.get('tab') || 'friends';
+        activateTab(initialTab); // This will also update the hidden inputs initially
+
+        // Add click event listeners to all tabs
+        tabLinks.forEach(link => {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetTab = this.getAttribute('data-tab');
+                activateTab(targetTab);
+            });
+        });
+    });
+
+    // Search functionality (existing)
+    function searchPeople(input) {
+        const searchTerm = input.value.toLowerCase();
+        const personCards = document.querySelectorAll('#discover-grid .person-card');
+
+        personCards.forEach(card => {
+            const name = card.getAttribute('data-name').toLowerCase();
+            const username = card.getAttribute('data-username').toLowerCase();
+
+            if (name.includes(searchTerm) || username.includes(searchTerm)) {
+                card.style.display = 'flex';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+</script>
+{% endblock %}

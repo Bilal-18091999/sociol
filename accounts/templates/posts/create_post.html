@@ -1,0 +1,513 @@
+{% extends "base.html" %}
+{% block title %}Friends - Socio{% endblock %}
+
+{% block content  %}
+    <style>
+              .header-actions {
+    display: flex
+;
+    align-items
+: center;
+   gap: 1px; 
+}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        .maincontent {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .feed-header {
+            margin-bottom: 20px;
+        }
+        .feed-title {
+            font-size: 24px;
+            color: #1c1e21;
+            margin-bottom: 8px;
+        }
+        .feed-subtitle {
+            font-size: 14px;
+            color: #65676b;
+        }
+        .post-container {
+            width: 100%;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        .header {
+            padding: 20px;
+            border-bottom: 1px solid #e1e5e9;
+        }
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            color: #1c1e21;
+            margin-bottom: 16px;
+        }
+        .send-icon {
+            width: 20px;
+            height: 20px;
+            transform: rotate(-45deg);
+        }
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .avatar {
+            width: 40px;
+            height: 40px;
+            background: #4267b2;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+        .user-info h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1c1e21;
+        }
+        .user-info p {
+            font-size: 12px;
+            color: #65676b;
+            margin-top: 2px;
+        }
+        /* Responsive Tabs */
+        .tabs {
+            display: flex;
+            padding: 0;
+            background: #f0f2f5;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        .tabs::-webkit-scrollbar {
+            display: none;
+        }
+        .tab {
+            flex: 1 0 auto;
+            min-width: 80px;
+            padding: 12px 8px;
+            white-space: nowrap;
+            border: none;
+            background: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-size: 14px;
+            color: #65676b;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        .tab:hover {
+            background: #e4e6ea;
+        }
+        .tab.active {
+            color: #4267b2;
+            border-bottom-color: #4267b2;
+            background: white;
+        }
+        .tab-icon {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+        .content {
+            padding: 20px;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .text-content textarea {
+            width: 100%;
+            min-height: 120px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 14px;
+            resize: vertical;
+            font-family: inherit;
+        }
+        .image-content, .video-content, .poll-content {
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            color: #65676b;
+        }
+        .upload-area {
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .upload-area:hover {
+            border-color: #4267b2;
+            color: #4267b2;
+        }
+        .upload-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 16px;
+            opacity: 0.6;
+        }
+        .poll-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 16px;
+            opacity: 0.6;
+        }
+        .poll-title {
+            font-size: 16px;
+            color: #1c1e21;
+            margin-bottom: 8px;
+        }
+        .poll-subtitle {
+            font-size: 12px;
+            color: #f56500;
+        }
+        .input-section {
+            margin-top: 20px;
+        }
+        .input-section input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-top: 1px solid #e1e5e9;
+        }
+        .cancel-btn {
+            padding: 8px 16px;
+            border: none;
+            background: none;
+            color: #65676b;
+            cursor: pointer;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .cancel-btn:hover {
+            background: #f0f2f5;
+        }
+        .post-btn {
+            padding: 8px 24px;
+            background: #4267b2;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .post-btn:hover {
+            background: #365899;
+        }
+        .hidden {
+            display: none;
+        }
+        .error-messages {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        .success-messages {
+            background: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        .file-input {
+            display: none;
+        }
+        .selected-file {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f0f2f5;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        /* Responsive Media Queries */
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            .post-container {
+                border-radius: 0;
+                box-shadow: none;
+            }
+            .header {
+                padding: 16px;
+            }
+            .header-title {
+                font-size: 16px;
+            }
+            .tab {
+                font-size: 12px;
+                padding: 10px 6px;
+                min-width: 70px;
+            }
+            .tab-icon {
+                width: 14px;
+                height: 14px;
+            }
+            .content {
+                padding: 16px;
+            }
+            .image-content, 
+            .video-content, 
+            .poll-content {
+                padding: 30px 20px;
+            }
+            .upload-icon {
+                width: 40px;
+                height: 40px;
+            }
+            .actions {
+                padding: 16px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .tab {
+                min-width: 100px;
+            }
+        }
+    </style>
+
+ <div class="container">
+        <div class="container">
+            <div class="feed-header">
+                <h1 class="feed-title">Create Post</h1>
+                <p class="feed-subtitle">Posts from you and your friends</p>
+            </div>
+            
+            <div class="post-container">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="{% if message.tags == 'error' %}error-messages{% else %}success-messages{% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <form method="post" enctype="multipart/form-data" id="postForm">
+                    {% csrf_token %}
+                    
+                    <div class="header">
+                        <div class="header-title">
+                            <svg class="send-icon" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                            </svg>
+                            Create Post
+                        </div>
+                        <div class="user-section">
+                            <div class="avatar">
+                                {% if user.profile_photo %}
+                                    <img src="{{ user.profile_photo.url }}" alt="{{ user.username }}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                                {% else %}
+                                    {{ user.username|first|upper }}
+                                {% endif %}
+                            </div>
+                            <div class="user-info">
+                                <h3>{{ user.get_full_name|default:user.username }}</h3>
+                                <p>Share your thoughts</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tabs">
+                        <button type="button" class="tab active" data-tab="text">
+                            <svg class="tab-icon" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0L19.2 12l-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/>
+                            </svg>
+                            Text
+                        </button>
+                        <button type="button" class="tab" data-tab="image">
+                            <svg class="tab-icon" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                            </svg>
+                            Image
+                        </button>
+                        <button type="button" class="tab" data-tab="video">
+                            <svg class="tab-icon" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/>
+                            </svg>
+                            Video
+                        </button>
+                        <button type="button" class="tab" data-tab="poll">
+                            <svg class="tab-icon" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+                            </svg>
+                            Poll
+                        </button>
+                    </div>
+
+                    {{ form.post_type }}
+
+                    <div class="content">
+                        <div class="tab-content active" id="text-content">
+                            <div class="text-content">
+                                {{ form.text_content }}
+                            </div>
+                        </div>
+
+                        <div class="tab-content" id="image-content">
+                            <div class="image-content">
+                                <div class="upload-area" onclick="document.getElementById('id_image').click()">
+                                    <svg class="upload-icon" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                                    </svg>
+                                    <div class="poll-title">Add photos to your post</div>
+                                    <div style="color: #65676b; font-size: 14px;">Click to upload or drag and drop</div>
+                                </div>
+                                {{ form.image }}
+                                <div id="image-preview" class="selected-file" style="display: none;"></div>
+                            </div>
+                        </div>
+
+                        <div class="tab-content" id="video-content">
+                            <div class="video-content">
+                                <div class="upload-area" onclick="document.getElementById('id_video').click()">
+                                    <svg class="upload-icon" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/>
+                                    </svg>
+                                    <div class="poll-title">Add a video to your post</div>
+                                    <div style="color: #65676b; font-size: 14px;">Click to upload or drag and drop</div>
+                                </div>
+                                {{ form.video }}
+                                <div id="video-preview" class="selected-file" style="display: none;"></div>
+                            </div>
+                        </div>
+
+                        <div class="tab-content" id="poll-content">
+                            <div class="poll-content">
+                                <svg class="poll-icon" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+                                </svg>
+                                <div class="poll-title">Create a poll to get opinions from your friends</div>
+                                <div class="poll-subtitle">(Poll functionality coming soon)</div>
+                            </div>
+                        </div>
+
+                        <div class="input-section">
+                            {{ form.caption }}
+                        </div>
+                    </div>
+
+                    <div class="actions">
+                        <button type="button" class="cancel-btn" onclick="window.history.back()">Cancel</button>
+                        <button type="submit" class="post-btn">
+                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                            </svg>
+                            Post
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching functionality with touch support
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const postTypeInput = document.getElementById('id_post_type');
+
+        // Function to handle tab switching
+        function switchTab(tab) {
+            // Remove active class from all tabs and contents
+            tabs.forEach(t => t.classList.remove('active'));
+            tabContents.forEach(content => content.classList.remove('active'));
+            
+            // Add active class to clicked tab
+            tab.classList.add('active');
+            
+            // Show corresponding content
+            const tabName = tab.getAttribute('data-tab');
+            document.getElementById(`${tabName}-content`).classList.add('active');
+            
+            // Update post type
+            postTypeInput.value = tabName;
+        }
+
+        // Click event for mouse users
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => switchTab(tab));
+        });
+
+        // Touch events for mobile users
+        tabs.forEach(tab => {
+            tab.addEventListener('touchstart', (e) => {
+                e.preventDefault(); // Prevent any default touch behavior
+                switchTab(tab);
+            }, { passive: false });
+        });
+
+        // File upload handling
+        document.getElementById('id_image')?.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const preview = document.getElementById('image-preview');
+            if (file) {
+                preview.innerHTML = `✓ ${file.name} selected`;
+                preview.style.display = 'block';
+            } else {
+                preview.style.display = 'none';
+            }
+        });
+
+        document.getElementById('id_video')?.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const preview = document.getElementById('video-preview');
+            if (file) {
+                preview.innerHTML = `✓ ${file.name} selected`;
+                preview.style.display = 'block';
+            } else {
+                preview.style.display = 'none';
+            }
+        });
+
+        // Set initial post type
+        if (postTypeInput) {
+            postTypeInput.value = 'text';
+        }
+    </script>
+{% endblock %}

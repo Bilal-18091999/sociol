@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+
+    <style>
+        .config-card {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        .form-label {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        .password-toggle {
+            position: absolute;
+            right: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #6c757d;
+            z-index: 5;
+        }
+        .password-toggle:hover {
+            color: #495057;
+        }
+        .btn-submit {
+            background-color: #0a66c2; /* LinkedIn blue */
+            border: none;
+            transition: all 0.3s ease;
+        }
+        .btn-submit:hover {
+            background-color: #084d94;
+        }
+    </style>
+
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-6">
+                <div class="config-card bg-white">
+                    <h2 class="text-center mb-4 fw-bold">LinkedIn Configuration</h2>
+                    
+                    <form method="post" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="mb-4">
+                            <label for="client_id" class="form-label">Client ID</label>
+                            <input type="text" class="form-control form-control-lg py-2" id="client_id" name="client_id" 
+                                   value="{{ linkedin_form.client_id.value|default:'' }}" required>
+                            <div class="invalid-feedback">
+                                Please provide a valid Client ID.
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4 position-relative">
+                            <label for="client_secret" class="form-label">Client Secret</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control form-control-lg py-2 pe-5" id="client_secret" 
+                                       name="client_secret" value="{{ linkedin_form.client_secret.value|default:'' }}" required>
+                                <button type="button" class="password-toggle" onclick="togglePassword()" aria-label="Toggle password visibility">
+                                    <i id="eye-icon" class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <div class="invalid-feedback">
+                                Please provide a valid Client Secret.
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="user_urn" class="form-label">User URN</label>
+                            <input type="text" class="form-control form-control-lg py-2" id="user_urn" name="user_urn" 
+                                   value="{{ linkedin_form.user_urn.value|default:'' }}" required>
+                            <div class="invalid-feedback">
+                                Please provide a valid User URN.
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-submit text-white btn-lg py-2 fw-semibold">
+                                <i class="fas fa-save me-2"></i>Save Configuration
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+    <!-- Font Awesome -->
+    <script src="https://kit.fontawesome.com/f7c860d8e5.js" crossorigin="anonymous"></script>
+
+    <script>
+        // Password toggle functionality
+        function togglePassword() {
+            const passwordField = document.getElementById('client_secret');
+            const eyeIcon = document.getElementById('eye-icon');
+            
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                eyeIcon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                passwordField.type = 'password';
+                eyeIcon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        }
+
+        // Form validation
+        (function() {
+            'use strict';
+            const forms = document.querySelectorAll('.needs-validation');
+            
+            Array.from(forms).forEach(function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        })();
+    </script>
+{% endblock %}

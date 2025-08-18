@@ -1,0 +1,893 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>{% block title %}Socio - Connect, Share, Discover{% endblock %}</title>
+     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+  .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .chat-input-area {
+            padding: 20px;
+            border-top: 1px solid #e1e5e9;
+        }
+        .chat-input-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #f9fafb;
+            border: 1px solid #d1d5db;
+            border-radius: 25px;
+            padding: 8px 16px;
+        }
+        .chat-input {
+            flex: 1;
+            border: none;
+            background: none;
+            padding: 8px 0;
+            font-size: 14px;
+            outline: none;
+        }
+        .send-btn {
+            width: 36px;
+            height: 36px;
+            background: #8b5cf6;
+            border: none;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .send-btn:hover {
+            background: #7c3aed;
+        }
+        /* Icons */
+        .icon {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+        /* Tab Navigation Styles */
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #e5e7eb;
+            margin-bottom: 2rem;
+            gap: 0;
+        }
+        .tab {
+            padding: 12px 24px;
+            text-decoration: none;
+            color: #6b7280;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        .tab:hover {
+            color: #374151;
+            background-color: #f9fafb;
+        }
+        .tab.active {
+            color: #3b82f6;
+            border-bottom-color: #3b82f6;
+            background-color: #eff6ff;
+        }
+        /* Tab Content Styles */
+        .tab-content {
+            position: relative;
+        }
+        .tab-pane {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        .tab-pane.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        /* People Grid and Card Styles */
+        .people-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .person-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.2s ease;
+        }
+        .person-card:hover {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border-color: #d1d5db;
+        }
+        .person-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #3b82f6;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        .person-info {
+            flex: 1;
+        }
+        .person-name {
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 0.25rem;
+        }
+        .person-email {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: white;
+            background: #10b981;
+        }
+        .add-friend-btn {
+            padding: 0.5rem 1rem;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: background-color 0.2s ease;
+        }
+        .add-friend-btn:hover {
+            background: #2563eb;
+        }
+        .discover-search {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+        .discover-search:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        .discover-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 1rem;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        /* Header Styles */
+        .header {
+            background: white;
+            border-bottom: 1px solid #e1e5e9;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            height: 60px;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #8b5cf6, #a855f7);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        .search-container {
+            flex: 1;
+            max-width: 400px;
+            margin: 0 40px;
+            position: relative;
+        }
+        .search-input {
+            width: 100%;
+            padding: 10px 16px;
+            border: 1px solid #e1e5e9;
+            border-radius: 20px;
+            background: #f8f9fa;
+            font-size: 14px;
+            outline: none;
+        }
+        .search-input:focus {
+            border-color: #8b5cf6;
+            background: white;
+        }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .header-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .header-btn:hover {
+            background: #f3f4f6;
+        }
+        .notification-badge {
+            position: relative;
+        }
+        .notification-badge::after {
+            content: '1';
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            background: #ef4444;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        /* Sidebar Styles */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 60px;
+            width: 240px;
+            height: calc(100vh - 60px);
+            background: white;
+            border-right: 1px solid #e1e5e9;
+            padding: 20px 0;
+            overflow-y: auto;
+        }
+        .sidebar-section {
+            margin-bottom: 24px;
+        }
+        .sidebar-title {
+            padding: 0 20px 8px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .sidebar-menu {
+            list-style: none;
+        }
+        .sidebar-item {
+            margin: 2px 0;
+        }
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            color: #374151;
+            text-decoration: none;
+            transition: all 0.2s;
+            border-radius: 0;
+        }
+        .sidebar-link:hover {
+            background: #f3f4f6;
+        }
+        .sidebar-link.active {
+            background: #8b5cf6;
+            color: white;
+        }
+        .sidebar-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .user-profile {
+            padding: 16px 20px;
+            border-top: 1px solid #e1e5e9;
+            margin-top: auto;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        /* Corrected avatar styling */
+        .avatar-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%; /* Makes the container round */
+            overflow: hidden; /* Clips content outside the round shape */
+            background: #8b5cf6; /* Fallback background for letter avatar */
+            display: flex; /* To center the letter if no image */
+            align-items: center;
+            justify-content: center;
+            color: white; /* Fallback text color for letter avatar */
+            font-weight: bold; /* Fallback font weight for letter avatar */
+            font-size: 14px; /* Adjust font size for letter avatar */
+        }
+        .avatar-circle img {
+            width: 100%; /* Make image fill the container width */
+            height: 100%; /* Make image fill the container height */
+            object-fit: cover; /* Ensures the image covers the area without distortion */
+        }
+        /* End corrected avatar styling */
+ .avatarp-circle {
+    margin-left: 29px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%; /* Makes the container round */
+            overflow: hidden; /* Clips content outside the round shape */
+            background: #8b5cf6; /* Fallback background for letter avatar */
+            display: flex; /* To center the letter if no image */
+            align-items: center;
+            justify-content: center;
+            color: white; /* Fallback text color for letter avatar */
+            font-weight: bold; /* Fallback font weight for letter avatar */
+            font-size: 14px; /* Adjust font size for letter avatar */
+        }
+        .avatarp-circle img {
+            width: 100%; /* Make image fill the container width */
+            height: 100%; /* Make image fill the container height */
+            object-fit: cover; /* Ensures the image covers the area without distortion */
+        }
+        .user-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+        }
+        .sign-out {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #6b7280;
+            text-decoration: none;
+            font-size: 14px;
+            padding: 8px 0;
+        }
+        /* Main Content Styles */
+        .main-content {
+            margin-left: 240px;
+            margin-top: 60px;
+            padding: 32px;
+            min-height: calc(100vh - 60px);
+        }
+        .page-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 8px;
+        }
+        .page-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #8b5cf6, #a855f7);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        .page-title {
+            font-size: 32px;
+            font-weight: bold;
+            color: #111827;
+        }
+        .page-subtitle {
+            color: #6b7280;
+            margin-bottom: 32px;
+            font-size: 16px;
+        }
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 32px;
+            margin-bottom: 32px;
+            border-bottom: 1px solid #e1e5e9;
+        }
+        .tab {
+            padding: 12px 0;
+            color: #6b7280;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        .tab.active {
+            color: #8b5cf6;
+            border-bottom-color: #8b5cf6;
+        }
+        .tab:hover {
+            color: #8b5cf6;
+        }
+        /* Discover Section */
+        .discover-section {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        .discover-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .discover-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #111827;
+        }
+        .discover-search {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 24px;
+            outline: none;
+        }
+        .discover-search:focus {
+            border-color: #8b5cf6;
+        }
+        /* People Grid */
+        .people-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .person-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .person-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #8b5cf6, #a855f7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .person-info {
+            flex: 1;
+        }
+        .person-name {
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 4px;
+        }
+        .person-email {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        .person-id {
+            color: #9ca3af;
+            font-size: 12px;
+        }
+        .add-friend-btn {
+            background: linear-gradient(135deg, #8b5cf6, #a855f7);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: transform 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .add-friend-btn:hover {
+            transform: translateY(-1px);
+        }
+        /* Status badges */
+        .status-badge {
+            background: #fef3c7;
+            color: #92400e;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .status-badge.sent {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .search-container {
+                margin: 0 20px;
+            }
+            .people-grid {
+                grid-template-columns: 1fr;
+            }
+            .notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: #ef4444; /* red-500 */
+    color: white;
+    border-radius: 9999px;
+    height: 16px;
+    width: 16px;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+        
+        /* NEW: Sidebar toggle */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease-in-out;
+                z-index: 2000;
+                background-color: #fff;
+            }
+
+            .sidebar.sidebar-visible {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0 !important;
+                padding-bottom: 60px; /* Avoid bottom nav overlap */
+            }
+        }
+
+        /* NEW: Bottom Navigation Bar */
+        .bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: white;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+            z-index: 1500;
+        }
+
+        .bottom-nav-item {
+            flex: 1;
+            text-align: center;
+            font-size: 12px;
+            color: #6b7280;
+            text-decoration: none;
+        }
+
+        .bottom-nav-item span {
+            display: block;
+            font-size: 20px;
+            margin-bottom: 2px;
+        }
+
+        .bottom-nav-item:hover {
+            color: #8b5cf6;
+        }
+
+        @media (max-width: 768px) {
+            .bottom-nav {
+                display: flex;
+            }
+        }}
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">S</div>
+            <span>Socio</span>
+        </div>
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Search posts, users, tags...">
+        </div>
+
+        <div class="header-actions">
+            <!-- NEW: Hamburger Menu Button -->
+            <button class="header-btn" id="mobile-menu-toggle">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="12" x2="21" y2="12" />
+                    <line x1="3" y1="6" x2="21" y2="6" />
+                    <line x1="3" y1="18" x2="21" y2="18" />
+                </svg>
+            </button>
+
+            <!-- Existing header buttons -->
+            <button class="header-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2v20M2 12h20"/>
+                </svg>
+            </button>
+        <button class="header-btn" onclick="window.location.href='{% url 'chat:chat_home' %}'">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+    </svg>
+</button>
+
+            <a href="{% url 'notifications:notifications_view' %}" class="header-btn relative">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                </svg>
+                {% if unread_count > 0 %}
+                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
+                    {{ unread_count }}
+                </span>
+                {% endif %}
+            </a>
+        </div>
+    </header>
+
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-title">Main</div>
+            <ul class="sidebar-menu">
+                <li class="sidebar-item">
+                    <a href="{% url 'posts:feed' %}" class="sidebar-link">
+                        <div class="sidebar-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                            </svg>
+                        </div>
+                        Feed
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="{% url 'friends' %}" class="sidebar-link">
+                        <div class="sidebar-icon">
+<i class="fas fa-user-friends"></i>
+                        </div>
+                        Friends
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link">
+                        <div class="sidebar-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"/>
+                                <path d="M21 21l-4.35-4.35"/>
+                            </svg>
+                        </div>
+                        Explore
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link">
+                        <div class="sidebar-icon">
+                          <i class="fas fa-chart-line"></i>
+
+                        </div>
+                        Trending
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="{% url 'posts:create_post' %}" class="sidebar-link">
+                        <div class="sidebar-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2v20M2 12h20"/>
+                            </svg>
+                        </div>
+                        Create
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="{% url 'chat:chat_home' %}" class="sidebar-link">
+                        <div class="sidebar-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                            </svg>
+                        </div>
+                        Messages
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="{% url 'notifications:notifications_view' %}" class="sidebar-link">
+                        <div class="sidebar-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                                <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                            </svg>
+                        </div>
+                        Notifications
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-title">Personal</div>
+            <ul class="sidebar-menu">
+                <li class="sidebar-item">
+                    <a href="{% url 'profile' %}" class="sidebar-link">
+                        <div class="sidebar-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                        </div>
+                        Profile
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="{% url 'posts:saved_posts' %}" class="sidebar-link">
+                        <div class="sidebar-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+                            </svg>
+                        </div>
+                        Bookmarks
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link">
+                        <div class="sidebar-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                                <line x1="8" y1="21" x2="16" y2="21"/>
+                                <line x1="12" y1="17" x2="12" y2="21"/>
+                            </svg>
+                        </div>
+                        Advertise
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="user-profile">
+            <div class="user-info">
+                <div class="profile-avatar">
+                    <div class="avatar-circle" id="avatar-display">
+                        {% if user.profile_photo %}
+                            <img src="{{ user.profile_photo.url }}" alt="Profile Photo" id="avatar-img">
+                        {% else %}
+                            <span id="avatar-letter">{{ user.username|slice:":1"|upper }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="user-name">
+                    {{ request.user.username }}
+                </div>
+            </div>
+            <a href="{% url 'user_logout' %}" class="sign-out">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16,17 21,12 16,7"/>
+                    <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+                Sign Out
+            </a>
+        </div>
+    </nav>
+    <!-- Main Content -->
+    <main class="main-content">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- NEW: Bottom Navigation Bar -->
+    <nav class="bottom-nav">
+        <a href="{% url 'posts:feed' %}" class="bottom-nav-item">
+            <span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                            </svg></span>
+            <small>Feed</small>
+        </a>
+        <a href="{% url 'friends' %}" class="bottom-nav-item">
+          <span> <i class="fas fa-user-friends"></i></span>
+            <small>Friends</small>
+        </a>
+        <a href="{% url 'posts:create_post' %}" class="bottom-nav-item">
+            <span> <i class="fas fa-plus"></i></span>
+            <small>Create</small>
+        </a>
+        <a href="{% url 'profile' %}" class="bottom-nav-item d-flex">
+            <div class="avatarp-circle" id="avatar-display">
+                       
+                            {% comment %} <img src="{{ user.profile_photo.url }}" alt="Profile Photo" id="avatar-img"> {% endcomment %}
+                       
+                                 {% if user.profile_photo %}
+                            <img src="{{ user.profile_photo.url }}" alt="Profile Photo" id="avatar-img">
+                        {% else %}
+                            <span id="avatar-letter">{{ user.username|slice:":1"|upper }}</span>
+                        {% endif %}     
+                       
+                    </div>
+                    Profile
+
+        </a>
+    </nav>
+
+    <!-- Scripts -->
+    <script>
+        // Toggle sidebar on mobile
+        const menuToggle = document.getElementById('mobile-menu-toggle');
+        const sidebar = document.querySelector('.sidebar');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('sidebar-visible');
+        });
+
+        {% block scripts %}
+        {% endblock %}
+    </script>
+</body>
+</html>
