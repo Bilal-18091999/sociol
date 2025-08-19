@@ -1,25 +1,28 @@
 {% extends "base.html" %}
-{% block title %}Friends - Socio{% endblock %}
 
 {% block content  %}
     <style>
-              .header-actions {
-    display: flex
-;
-    align-items
-: center;
+.bg-red-500 {
+    --tw-bg-opacity: 1;
+    background-color: rgb(239 68 68 / var(--tw-bg-opacity, 1));
+    border-radius: 10px;
+    color: white;
+    text-decoration: none;
+    padding: 2px;
+    position: absolute;
+    font-size: 12px;
+}
+.bg-red-500 {
+    position: absolute;
+    top: 4px;
+    right: 18px;
+    z-index: 10;
+}
+.header-actions {
+    display:flex;
+    align-items:center;
    gap: 1px; 
 }
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: #f8f9fa;
-            padding: 20px;
-        }
         .maincontent {
             max-width: 100%;
             margin: 0 auto;
@@ -312,7 +315,7 @@
         }
     </style>
 
- <div class="container">
+
         <div class="container">
             <div class="feed-header">
                 <h1 class="feed-title">Create Post</h1>
@@ -330,28 +333,7 @@
 
                 <form method="post" enctype="multipart/form-data" id="postForm">
                     {% csrf_token %}
-                    
-                    <div class="header">
-                        <div class="header-title">
-                            <svg class="send-icon" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
-                            </svg>
-                            Create Post
-                        </div>
-                        <div class="user-section">
-                            <div class="avatar">
-                                {% if user.profile_photo %}
-                                    <img src="{{ user.profile_photo.url }}" alt="{{ user.username }}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
-                                {% else %}
-                                    {{ user.username|first|upper }}
-                                {% endif %}
-                            </div>
-                            <div class="user-info">
-                                <h3>{{ user.get_full_name|default:user.username }}</h3>
-                                <p>Share your thoughts</p>
-                            </div>
-                        </div>
-                    </div>
+                   
 
                     <div class="tabs">
                         <button type="button" class="tab active" data-tab="text">
@@ -444,7 +426,7 @@
                 </form>
             </div>
         </div>
-    </div>
+        `
 
     <script>
         // Tab switching functionality with touch support

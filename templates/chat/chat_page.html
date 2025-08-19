@@ -1,3 +1,4 @@
+
 {% extends "base.html" %}
 {% block content %}
     <style>
@@ -316,7 +317,7 @@
         @media (max-width: 768px) {
             .chat-container {
                 flex-direction: column;
-                height: 100vh;
+                height: 84vh;
                 border-radius: 0;
                 box-shadow: none;
             }
@@ -380,7 +381,7 @@
           
             .messages-display {
         padding: 15px;
-        max-height: 488px;
+        max-height: 415px;
     }
    
     .message-input-area button {
@@ -409,15 +410,24 @@
  .main-content {
             margin-left: 0 !important;
             padding-bottom: 60px;
-            padding:0px;
-        }
-        }
-              .header-actions {
-    display: flex
-;
-    align-items
-: center;
-   gap: 1px; 
+            padding:0px;}
+        
+.chat-header {
+    /* padding: 5px 20px !important; */
+    border-bottom: 1px solid #eee;
+    background-color: #f8f9fa;
+    display: flex;
+    align-items: center;
+    position: fixed !important;
+    top: 10 !important;
+    z-index: 10;
+    width: 100%;
+}}
+        
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1px; 
 }
 
     </style>

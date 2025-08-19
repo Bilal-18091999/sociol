@@ -351,7 +351,7 @@ def facebook_instagram_config(request):
       
         facebook_instagram_form = FacebookAndInstagramConfigurationForm(instance=post)
 
-    return render(request, 'facebook_form.html', {
+    return render(request, 'posts/facebook_form.html', {
         'facebook_form': facebook_instagram_form, 
     })
 
@@ -373,7 +373,7 @@ def linkedin_config(request):
       
         linkedin_form = LinkedInConfigurationForm(instance=post)
 
-    return render(request, 'linkedin_form.html', {
+    return render(request, 'posts/linkedin_form.html', {
         'linkedin_form': linkedin_form, 
     })
 
