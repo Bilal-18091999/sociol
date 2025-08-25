@@ -15,7 +15,8 @@ AUTH_USER_MODEL = 'accounts.UserDetails'
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-BASE_URL = 'http://127.0.0.1:8000/'
+# BASE_URL = 'http://127.0.0.1:8000/'
+BASE_URL = 'https://sociol.pythonanywhere.com/'
 LINKEDIN_REDIRECT_URI = f"{BASE_URL}posts/linkedin/callback/"
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

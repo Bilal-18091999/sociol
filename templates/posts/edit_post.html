@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Edit Post</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="form-group mb-3">
+                            <label for="{{ form.post_type.id_for_label }}">Post Type</label>
+                            {{ form.post_type }}
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="{{ form.text_content.id_for_label }}">Content</label>
+                            {{ form.text_content }}
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="{{ form.caption.id_for_label }}">Caption</label>
+                            {{ form.caption }}
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="{{ form.image.id_for_label }}">Image</label>
+                            {{ form.image }}
+                            {% if post.image %}
+                                <div class="mt-2">
+                                    <img src="{{ post.image.url }}" alt="Current image" style="max-width: 200px;">
+                                    <div class="form-check mt-2">
+                                        <input class="form-check-input" type="checkbox" name="image-clear" id="image-clear">
+                                        <label class="form-check-label" for="image-clear">Remove current image</label>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="{{ form.video.id_for_label }}">Video</label>
+                            {{ form.video }}
+                            {% if post.video %}
+                                <div class="mt-2">
+                                    <video width="200" controls>
+                                        <source src="{{ post.video.url }}" type="video/mp4">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                    <div class="form-check mt-2">
+                                        <input class="form-check-input" type="checkbox" name="video-clear" id="video-clear">
+                                        <label class="form-check-label" for="video-clear">Remove current video</label>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                            <a href="{% url 'posts:your_feed' %}" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
