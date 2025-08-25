@@ -524,7 +524,7 @@ body{
                                 </div>
                             </div>
                             <div class="post-meta">
-                                <span class="post-type {{ post.post_type }}">{{ post.post_type }}</span>
+                                {% comment %} <span class="post-type {{ post.post_type }}">{{ post.post_type }}</span> {% endcomment %}
                                  <div class="dropdown">
                                     <button class="menu-button">⋯</button>
                                     <div class="dropdown-content">
@@ -535,10 +535,13 @@ body{
                                              <a href="{% url 'posts:post_to_instagram' post.id %}" class="share-instagram" data-post-id="{{ post.id }}">
                                                 <i class="fab fa-instagram  dropdown-icon" style="font-size: 8px;"></i> Share to Instagram
                                             </a> 
-                                                                                       <a href="#" class="share-linkedin" data-post-id="{{ post.id }}"><i class="fab fa-linkedin-in dropdown-icon"></i> Share to LinkedIn</a>
-                                   <a href="{% url 'posts:delete_post' post.id %}" class="delete-post" data-post-id="{{ post.id }}">
+                                            <a href="{% url 'posts:linkedin_login' post.id %}" class="share-linkedin" data-post-id="{{ post.id }}"><i class="fab fa-linkedin-in dropdown-icon"></i> Share to LinkedIn</a>
+                                        <a href="{% url 'posts:delete_post' post.id %}" class="delete-post" data-post-id="{{ post.id }}">
                                             <i class="fas fa-trash dropdown-icon"></i> Delete Post</a> 
-                                                                                    </div>
+                                         <a href="{% url 'posts:edit_post' post.id %}" class="btn btn-sm btn-outline-secondary">Edit Post</a>
+                                        
+                                        </div>
+
                                 </div>                            </div>
                         </div>
 

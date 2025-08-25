@@ -96,6 +96,22 @@ def delete_post(request, post_id):
     
     return redirect('posts:your_feed')  # Always redirect
 
+from posts.forms import PostEditForm
+@login_required
+def edit_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id, user=request.user)
+    
+    if request.method == 'POST':
+        form = PostEditForm(request.POST, request.FILES, instance=post)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Post updated successfully.")
+            return redirect('posts:your_feed')
+    else:
+        form = PostEditForm(instance=post)
+    
+        return render(request, 'posts/edit_post.html', {'form': form, 'post': post})
+
 
 # @login_required
 # @require_POST
@@ -548,25 +564,29 @@ def post_to_instagram(request, post_id):
 
 
     return redirect('posts:your_feed')
-
-
 import requests
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.conf import settings
 from django.contrib import messages
-from .models import LinkedInConfiguration  # Create a model like Facebook config
+from django.utils.timezone import now
+import datetime
+import requests
+from django.shortcuts import redirect, get_object_or_404
+from django.conf import settings
+from django.contrib import messages
+from django.utils.timezone import now
+import datetime
 
 # Step 1: Redirect to LinkedIn's OAuth
 def linkedin_login(request, post_id):
-    
-        # Get the post and user
+    # Get the post and user
     post = get_object_or_404(Post, id=post_id, is_active=True)
     user = request.user
     request.session["post_id"] = post_id
 
-        
-        # Get Facebook configuration for this user
+    # Get LinkedIn configuration for this user
     linkedin_config = get_object_or_404(LinkedInConfiguration, created_by=user)
+    
     auth_url = (
         "https://www.linkedin.com/oauth/v2/authorization"
         f"?response_type=code"
@@ -575,22 +595,25 @@ def linkedin_login(request, post_id):
         f"&scope=w_member_social%20openid%20profile"
     )
     
-    # auth_url = (
-    #     f"{AUTH_URL}?response_type=code&client_id={conf.client_id}"
-    #     f"&redirect_uri={REDIRECT_URI}&scope=w_member_social%20openid%20profile"
-    # )
     return redirect(auth_url)
 
 # Step 2: Callback to get token
 def linkedin_callback(request):
     code = request.GET.get('code')
     post_id = request.session.get("post_id")
-    post_obj = Post.objects.get(id=post_id)
+    
+    if not post_id:
+        messages.error(request, "Post ID not found in session")
+        return redirect('posts:your_feed')
+        
+    post_obj = get_object_or_404(Post, id=post_id)
+    
+    # FIXED: Use post_obj.user instead of post_obj.created_by
     linkedin_config = LinkedInConfiguration.objects.filter(created_by=post_obj.user).last()
 
     if not code:
         messages.error(request, "No code returned from LinkedIn")
-        return redirect('dashboard')
+        return redirect('posts:your_feed')
 
     token_url = "https://www.linkedin.com/oauth/v2/accessToken"
     payload = {
@@ -600,43 +623,67 @@ def linkedin_callback(request):
         'client_id': linkedin_config.client_id,
         'client_secret': linkedin_config.client_secret,
     }
-    r = requests.post(token_url, data=payload)
-    token_data = r.json()
     
-    access_token = token_data.get("access_token")
-    if not access_token:
-        messages.error(request, "Failed to get LinkedIn access token")
-        return redirect('your_feed')
+    try:
+        r = requests.post(token_url, data=payload)
+        token_data = r.json()
+        
+        access_token = token_data.get("access_token")
+        expires_in = token_data.get("expires_in", 5184000)  # Default to 60 days
+        
+        if not access_token:
+            messages.error(request, "Failed to get LinkedIn access token")
+            return redirect('posts:your_feed')
 
-    # Save token in DB
-    LinkedInConfiguration.objects.update_or_create(
-        created_by=request.user,
-        defaults={'access_token': access_token}
-    )
-    print("LinkedIn access token saved:", access_token)
-    messages.success(request, "LinkedIn connected successfully!")
-    return post_to_linkedin(request, post_id)
+        # Save token in DB with expiry
+        expiry_time = now() + datetime.timedelta(seconds=expires_in)
+        LinkedInConfiguration.objects.update_or_create(
+            created_by=post_obj.user,  # FIXED: Use post_obj.user
+            defaults={
+                'access_token': access_token,
+                'expires_at': expiry_time
+            }
+        )
+        
+        print("LinkedIn access token saved:", access_token)
+        messages.success(request, "LinkedIn connected successfully!")
+        
+        # Proceed to post
+        return post_to_linkedin(request, post_id, access_token)
+        
+    except Exception as e:
+        messages.error(request, f"Error during LinkedIn authentication: {str(e)}")
+        return redirect('posts:your_feed')
 
-from accounts.models import Post
-from posts.models import LinkedInConfiguration
-
-def post_to_linkedin(request, post_id):
+def post_to_linkedin(request, post_id, access_token=None):
     try:
         print("Post to LinkedIn called with post_id:", post_id)
         post = get_object_or_404(Post, id=post_id, is_active=True)
-        user = request.user
+        
+        # FIXED: Use post.user instead of post.created_by
+        user = post.user
 
-        linkedin_config = get_object_or_404(LinkedInConfiguration, created_by=user)
-        access_token = linkedin_config.access_token
-        person_urn = linkedin_config.user_urn  # Store in config if needed
+        # If access_token is not provided, get it from the database
+        if not access_token:
+            linkedin_config = get_object_or_404(LinkedInConfiguration, created_by=user)
+            access_token = linkedin_config.access_token
+            person_urn = linkedin_config.user_urn
+        else:
+            # FIXED: Get linkedin_config even when access_token is provided
+            linkedin_config = get_object_or_404(LinkedInConfiguration, created_by=user)
+            person_urn = linkedin_config.user_urn
 
-        headers = {"Authorization": f"Bearer {access_token}", "Content-Type": "application/json"}
+        headers = {
+            "Authorization": f"Bearer {access_token}", 
+            "Content-Type": "application/json",
+            "X-Restli-Protocol-Version": "2.0.0"
+        }
 
         # TEXT ONLY POST
         if post.post_type == "text":
             print("Processing text post for LinkedIn")
             data = {
-                "author": person_urn,
+                "author": f"urn:li:person:{person_urn}",
                 "lifecycleState": "PUBLISHED",
                 "specificContent": {
                     "com.linkedin.ugc.ShareContent": {
@@ -659,14 +706,29 @@ def post_to_linkedin(request, post_id):
                     "serviceRelationships": [{"relationshipType": "OWNER", "identifier": "urn:li:userGeneratedContent"}]
                 }
             }
-            reg_res = requests.post("https://api.linkedin.com/v2/assets?action=registerUpload",
-                                    json=register_data, headers=headers).json()
+            
+            reg_res = requests.post(
+                "https://api.linkedin.com/v2/assets?action=registerUpload",
+                json=register_data, 
+                headers=headers
+            ).json()
+            
+            if "value" not in reg_res:
+                messages.error(request, "Failed to register image upload")
+                return redirect('posts:your_feed')
+                
             upload_url = reg_res["value"]["uploadMechanism"]["com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest"]["uploadUrl"]
             asset_id = reg_res["value"]["asset"]
             print("Asset ID for image:", asset_id)
+            
             # 2. Upload Image
+            image_headers = {"Authorization": f"Bearer {access_token}", "Content-Type": "image/jpeg"}
             with post.image.open('rb') as img_file:
-                requests.put(upload_url, data=img_file, headers={"Authorization": f"Bearer {access_token}"})
+                upload_response = requests.put(upload_url, headers=image_headers, data=img_file)
+                
+            if upload_response.status_code != 201:
+                messages.error(request, "Failed to upload image to LinkedIn")
+                return redirect('posts:your_feed')
 
             # 3. Create Post
             post_data = {
@@ -674,7 +736,7 @@ def post_to_linkedin(request, post_id):
                 "lifecycleState": "PUBLISHED",
                 "specificContent": {
                     "com.linkedin.ugc.ShareContent": {
-                        "shareCommentary": {"text": post or ""},
+                        "shareCommentary": {"text": post.caption or ""},
                         "shareMediaCategory": "IMAGE",
                         "media": [{
                             "status": "READY",
@@ -688,19 +750,68 @@ def post_to_linkedin(request, post_id):
             }
             r = requests.post("https://api.linkedin.com/v2/ugcPosts", json=post_data, headers=headers)
 
+        # VIDEO POST
+        elif post.post_type == "video" and post.video:
+            print("Processing video post for LinkedIn")
+            # 1. Register Upload
+            register_data = {
+                "registerUploadRequest": {
+                    "recipes": ["urn:li:digitalmediaRecipe:feedshare-video"],
+                    "owner": f"urn:li:person:{person_urn}",
+                    "serviceRelationships": [{"relationshipType": "OWNER", "identifier": "urn:li:userGeneratedContent"}]
+                }
+            }
+            
+            reg_res = requests.post(
+                "https://api.linkedin.com/v2/assets?action=registerUpload",
+                json=register_data, 
+                headers=headers
+            ).json()
+            
+            if "value" not in reg_res:
+                messages.error(request, "Failed to register video upload")
+                return redirect('posts:your_feed')
+                
+            upload_url = reg_res["value"]["uploadMechanism"]["com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest"]["uploadUrl"]
+            asset_id = reg_res["value"]["asset"]
+            print("Asset ID for video:", asset_id)
+            
+            # 2. Upload Video
+            video_headers = {"Authorization": f"Bearer {access_token}", "Content-Type": "application/octet-stream"}
+            with post.video.open('rb') as video_file:
+                upload_response = requests.put(upload_url, headers=video_headers, data=video_file)
+                
+            if upload_response.status_code != 201:
+                messages.error(request, "Failed to upload video to LinkedIn")
+                return redirect('posts:your_feed')
 
-        # # VIDEO POST (same pattern as image but with video recipe)
-        # elif post.post_type == "video" and post.video:
-        #     # Very similar but use "urn:li:digitalmediaRecipe:feedshare-video"
-        #     pass
+            # 3. Create Post
+            post_data = {
+                "author": f"urn:li:person:{person_urn}",
+                "lifecycleState": "PUBLISHED",
+                "specificContent": {
+                    "com.linkedin.ugc.ShareContent": {
+                        "shareCommentary": {"text": post.caption or ""},
+                        "shareMediaCategory": "VIDEO",
+                        "media": [{
+                            "status": "READY",
+                            "description": {"text": post.caption or ""},
+                            "media": asset_id,
+                            "title": {"text": "Video Post"}
+                        }]
+                    }
+                },
+                "visibility": {"com.linkedin.ugc.MemberNetworkVisibility": "PUBLIC"}
+            }
+            r = requests.post("https://api.linkedin.com/v2/ugcPosts", json=post_data, headers=headers)
+
+        else:
+            messages.error(request, "Unsupported post type or missing media")
+            return redirect('posts:your_feed')
+
+        print("LinkedIn post response status:", r.status_code)
         print("LinkedIn post response:", r.json())
 
-        if r.status_code == 201:
-            messages.success(request, "Post shared to LinkedIn successfully!")
-            print("LinkedIn post response:", r.json())
-        else:
-            messages.error(request, f"LinkedIn error: {r.text}")
-            print("LinkedIn post error:", r.json())
 
     except Exception as e:
         messages.error(request, f"Error: {str(e)}")

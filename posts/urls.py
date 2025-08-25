@@ -8,6 +8,7 @@ urlpatterns = [
     path('feed/', views.feed_view, name='feed'),
     path('your_feed/', views.your_feed, name='your_feed'),
     path('post/delete/<int:post_id>/', views.delete_post, name='delete_post'),
+    path('edit-post/<int:post_id>/', views.edit_post, name='edit_post'),
 
     
     path('post/<int:post_id>/like/', views.toggle_like, name='toggle_like'),

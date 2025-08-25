@@ -319,11 +319,11 @@
       <button type="submit" class="sign-in-btn">Sign Up</button>
     </form>
 
-    <div class="divider">
+    {% comment %} <div class="divider">
       <span>OR CONTINUE WITH</span>
-    </div>
+    </div> {% endcomment %}
 
-    <div class="social-buttons">
+    {% comment %} <div class="social-buttons">
       <button class="social-btn" title="Google Login">
         <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor">
           <path
@@ -331,15 +331,15 @@
         </svg>
       </button>
     </div>
-  </div>
+  </div> {% endcomment %}
 
-  {% if messages %}
+  {% comment %} {% if messages %}
     {% for message in messages %}
       <div class="message {% if message.tags %}{{ message.tags }}{% endif %}">
         {{ message }}
       </div>
     {% endfor %}
-  {% endif %}
+  {% endif %} {% endcomment %}
 
   <script>
     const signInTab = document.getElementById("signInTab");

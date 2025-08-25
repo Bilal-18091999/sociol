@@ -657,9 +657,9 @@
             <div class="logo-icon">S</div>
             <span>Socio</span>
         </div>
-        <div class="search-container">
+        {% comment %} <div class="search-container">
             <input type="text" class="search-input" placeholder="Search posts, users, tags...">
-        </div>
+        </div> {% endcomment %}
 
         <div class="header-actions">
             <!-- NEW: Hamburger Menu Button -->
@@ -849,15 +849,15 @@
             <span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
                             </svg></span>
-            <small>Feed</small>
+            {% comment %} <small>Feed</small> {% endcomment %}
         </a>
         <a href="{% url 'friends' %}" class="bottom-nav-item">
           <span> <i class="fas fa-user-friends"></i></span>
-            <small>Friends</small>
+            {% comment %} <small>Friends</small> {% endcomment %}
         </a>
         <a href="{% url 'posts:create_post' %}" class="bottom-nav-item">
             <span> <i class="fas fa-plus"></i></span>
-            <small>Create</small>
+            {% comment %} <small>Create</small> {% endcomment %}
         </a>
         <a href="{% url 'profile' %}" class="bottom-nav-item d-flex">
             <div class="avatarp-circle" id="avatar-display">
@@ -871,7 +871,7 @@
                         {% endif %}     
                        
                     </div>
-                    Profile
+                    {% comment %} Profile {% endcomment %}
 
         </a>
     </nav>
@@ -891,3 +891,5 @@
     </script>
 </body>
 </html>
+
+
