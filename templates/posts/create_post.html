@@ -323,13 +323,13 @@
             </div>
             
             <div class="post-container">
-                {% if messages %}
+                {% comment %} {% if messages %}
                     {% for message in messages %}
                         <div class="{% if message.tags == 'error' %}error-messages{% else %}success-messages{% endif %}">
                             {{ message }}
                         </div>
                     {% endfor %}
-                {% endif %}
+                {% endif %} {% endcomment %}
 
                 <form method="post" enctype="multipart/form-data" id="postForm">
                     {% csrf_token %}

@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% block title %}profile - Socio{% endblock %}
 {% block content %}
-    <style>
-        .bg-red-500 {
+<style>
+.bg-red-500 {
     --tw-bg-opacity: 1;
     background-color: rgb(239 68 68 / var(--tw-bg-opacity, 1));
     border-radius: 10px;
@@ -12,462 +12,724 @@
     position: absolute;
     font-size: 12px;
 }
+
 .bg-red-500 {
     position: absolute;
     top: 4px;
     right: 18px;
     z-index: 10;
 }
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: #f8f9fa;
-            color: #333;
-        }
-        .maincontent {
-            max-width: 100%;
-            margin: 0 auto;
-        }
-        .container {
-           
-            margin: 0 auto;
-        }
-        .profile-overview {
-            background: white;
-            border-radius: 12px;
-            padding: 24px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-        .profile-overview h2 {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 24px;
-            color: #1a1a1a;
-        }
-        .profile-overview h2::before {
-            content: "⚙️";
-            font-size: 18px;
-        }
-        .profile-avatar1 {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 24px;
-        }
-        .avatar-circle {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 32px;
-            font-weight: bold;
-            margin-bottom: 16px;
-            overflow: hidden;
-        }
-        .avatar-circle1 img {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-        .change-photo-btn {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: #f8f9fa;
-            border: 1px solid #e9ecef;
-            padding: 8px 16px;
-            border-radius: 8px;
-            color: #495057;
-            text-decoration: none;
-            font-size: 14px;
-            transition: all 0.2s;
-            cursor: pointer;
-        }
-        .change-photo-btn:hover {
-            background: #e9ecef;
-        }
-        .remove-photo-btn {
-            background-color: #dc3545;
-            color: white;
-            border-color: #dc3545;
-        }
-        .remove-photo-btn:hover {
-            background-color: #c82333;
-            border-color: #bd2130;
-        }
-        .hidden-file-input {
-            display: none;
-        }
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-        }
-        .stat-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 12px;
-            border-radius: 8px;
-            transition: all 0.2s;
-        }
-        .stat-item.posts:hover {
-            background-color: rgba(139, 92, 246, 0.1);
-            cursor: pointer;
-        }
-        .stat-label {
-            color: #6c757d;
-            font-size: 14px;
-            margin-bottom: 4px;
-        }
-        .stat-value {
-            font-weight: 600;
-            color: #1a1a1a;
-            font-size: 16px;
-        }
-        .edit-profile {
-            background: white;
-            border-radius: 12px;
-            padding: 24px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-        .edit-profile h2 {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 24px;
-            color: #1a1a1a;
-        }
-        .tabs {
-            display: flex;
-            gap: 16px;
-            margin-bottom: 24px;
-            border-bottom: 1px solid #e9ecef;
-            overflow-x: auto;
-            padding-bottom: 8px;
-        }
-        .tab {
-            padding: 8px 0;
-            color: #6c757d;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            border-bottom: 2px solid transparent;
-            transition: all 0.2s;
-            white-space: nowrap;
-        }
-        .tab.active {
-            color: #1a1a1a;
-            border-bottom-color: #8b5cf6;
-        }
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
-            margin-bottom: 24px;
-        }
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-        .form-group.full-width {
-            grid-column: 1 / -1;
-        }
-        .form-label {
-            font-size: 14px;
-            font-weight: 500;
-            color: #374151;
-            margin-bottom: 8px;
-        }
-        .form-input {
-            padding: 12px;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: border-color 0.2s;
-        }
-        .form-input:focus {
-            outline: none;
-            border-color: #8b5cf6;
-            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
-        }
-        .form-textarea {
-            padding: 12px;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            font-size: 14px;
-            min-height: 100px;
-            resize: vertical;
-            font-family: inherit;
-            transition: border-color 0.2s;
-        }
-        .form-textarea:focus {
-            outline: none;
-            border-color: #8b5cf6;
-            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
-        }
-        .save-btn {
-            width: 100%;
-            background: #8b5cf6;
-            color: white;
-            border: none;
-            padding: 14px 24px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        .save-btn:hover {
-            background: #7c3aed;
-        }
 
-        /* Desktop styles */
-        @media (min-width: 768px) {
-            .main-content {
-                flex-direction: row;
-                padding: 0px !important;
-            }
-            .profile-overview {
-                flex: 1;
-            }
-            .edit-profile {
-                flex: 1.5;
-            }
-            .form-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-            .tabs {
-                gap: 24px;
-            }
-        }
-
-        /* Loading spinner */
-        .spinner {
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 1s ease-in-out infinite;
-            display: inline-block;
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-                .avatar-circle {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%; /* Makes the container round */
-            overflow: hidden; /* Clips content outside the round shape */
-            background: #8b5cf6; /* Fallback background for letter avatar */
-            display: flex; /* To center the letter if no image */
-            align-items: center;
-            justify-content: center;
-            color: white; /* Fallback text color for letter avatar */
-            font-weight: bold; /* Fallback font weight for letter avatar */
-            font-size: 14px; /* Adjust font size for letter avatar */
-        }
-        .avatar-circle img {
-            width: 100%; /* Make image fill the container width */
-            height: 100%; /* Make image fill the container height */
-            object-fit: cover; /* Ensures the image covers the area without distortion */
-        }
-              .header-actions {
-    display: flex
-;
-    align-items
-: center;
-   gap: 1px; 
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
-     
-    </style>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+.maincontent {
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+.container {
+    margin: 0 auto;
+}
+
+.profile-overview {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.profile-overview h2 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    color: #1a1a1a;
+}
+
+.profile-overview h2::before {
+    content: "⚙";
+    font-size: 18px;
+}
+
+.profile-avatar1 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.avatar-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 16px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.avatar-circle:hover {
+    transform: scale(1.05);
+}
+
+.avatar-circle1 {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s;
+    margin-bottom: 16px;
+}
+
+.avatar-circle1:hover {
+    transform: scale(1.05);
+}
+
+.avatar-circle1 img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.change-photo-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    padding: 8px 16px;
+    border-radius: 8px;
+    color: #495057;
+    text-decoration: none;
+    font-size: 14px;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.change-photo-btn:hover {
+    background: #e9ecef;
+}
+
+.remove-photo-btn {
+    background-color: #dc3545;
+    color: white;
+    border-color: #dc3545;
+}
+
+.remove-photo-btn:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+}
+
+.hidden-file-input {
+    display: none;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.stat-item.posts:hover {
+    background-color: rgba(139, 92, 246, 0.1);
+    cursor: pointer;
+}
+
+.stat-label {
+    color: #6c757d;
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+.stat-value {
+    font-weight: 600;
+    color: #1a1a1a;
+    font-size: 16px;
+}
+
+.edit-profile {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.edit-profile h2 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    color: #1a1a1a;
+}
+
+.tabs {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid #e9ecef;
+    overflow-x: auto;
+    padding-bottom: 8px;
+}
+
+.tab {
+    padding: 8px 0;
+    color: #6c757d;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.tab.active {
+    color: #1a1a1a;
+    border-bottom-color: #8b5cf6;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 8px;
+}
+
+.form-input {
+    padding: 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.2s;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #8b5cf6;
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+}
+
+.form-textarea {
+    padding: 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 14px;
+    min-height: 100px;
+    resize: vertical;
+    font-family: inherit;
+    transition: border-color 0.2s;
+}
+
+.form-textarea:focus {
+    outline: none;
+    border-color: #8b5cf6;
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+}
+
+.save-btn {
+    width: 100%;
+    background: #8b5cf6;
+    color: white;
+    border: none;
+    padding: 14px 24px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.save-btn:hover {
+    background: #7c3aed;
+}
+
+/* Modal styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    max-width: 90%;
+    max-height: 90%;
+    position: relative;
+    transform: scale(0.7);
+    transition: transform 0.3s ease;
+}
+
+.modal-overlay.active .modal-content {
+    transform: scale(1);
+}
+
+.modal-image {
+    max-width: 100%;
+    max-height: 70vh;
+    border-radius: 8px;
+}
+
+.modal-close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+}
+
+.modal-close:hover {
+    background-color: #f0f0f0;
+}
+
+.preview-indicator {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #28a745;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* Desktop styles */
+@media (min-width: 768px) {
+    .main-content {
+        flex-direction: row;
+        padding: 0px !important;
+    }
+    .profile-overview {
+        flex: 1;
+    }
+    .edit-profile {
+        flex: 1.5;
+    }
+    .form-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+    .tabs {
+        gap: 24px;
+    }
+}
+
+/* Loading spinner */
+.spinner {
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s ease-in-out infinite;
+    display: inline-block;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1px;
+}
+</style>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Image Modal -->
+<div class="modal-overlay" id="imageModal">
+    <div class="modal-content">
+        <button class="modal-close" id="closeModal">&times;</button>
+        <img src="/placeholder.svg" alt="Profile Photo" class="modal-image" id="modalImage">
+    </div>
+</div>
+
 <div class="container">
     <div class="row">
         <div class="col-md-4">
-        <!-- Profile Overview Section -->
-        <div class="profile-overview">
-            <h2>Profile Overview</h2>
-            <div class="profile-avatar1">
-                <div class="avatar-circle1" id="avatar-display">
-                    {% if user.profile_photo %}
-                        <img src="{{ user.profile_photo.url }}" alt="Profile Photo" id="avatar-img">
-                    {% else %}
-                        <span id="avatar-letter" class="avatar-circle">{{ user.username|slice:":1"|upper }}</span>
-                    {% endif %}
-                </div>
-
-                <div style="display: flex; gap: 10px; margin-top: 16px;">
-                    <!-- Change photo button that triggers the form's file input -->
-                    <label for="id_profile_photo" class="change-photo-btn">
-                        <span>📷</span>
-                        Change Photo
-                    </label>
-
-                    <!-- Remove photo button (only visible if a photo exists) -->
-                    {% if user.profile_photo %}
+            <!-- Profile Overview Section -->
+            <div class="profile-overview">
+                <h2>Profile Overview</h2>
+                <div class="profile-avatar1">
+                    <div class="avatar-circle1" id="avatar-display" onclick="showImageModal()">
+                        {% if user.profile_photo %}
+                            <img src="{{ user.profile_photo.url }}" alt="Profile Photo" id="avatar-img">
+                        {% else %}
+                            <span id="avatar-letter" class="avatar-circle">{{ user.username|slice:":1"|upper }}</span>
+                        {% endif %}
+                        <div class="preview-indicator" id="previewIndicator" style="display: none;">!</div>
+                    </div>
+                    <div style="display: flex; gap: 10px; margin-top: 16px;">
+                        <!-- Change photo button that triggers the form's file input -->
+                        <label for="id_profile_photo" class="change-photo-btn">
+                            <span>📷</span> Change Photo
+                        </label>
+                        <!-- Remove photo button (only visible if a photo exists) -->
+                        {% if user.profile_photo %}
                         <form method="POST" action="{% url 'profile' %}" style="display: inline-block;">
                             {% csrf_token %}
                             <input type="hidden" name="remove_profile_photo" value="true">
                             <button type="submit" class="change-photo-btn remove-photo-btn">
-                                <span>🗑️</span>
-                                Remove Photo
+                                <span>🗑</span> Remove Photo
                             </button>
                         </form>
-                    {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-item posts" id="posts-stat" data-endpoint="{% url 'posts:my_feed' %}">
+                        <span class="stat-label">Posts</span>
+                        <span class="stat-value">{{ post_count }}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Friends</span>
+                        <span class="stat-value">{{ friends_count }}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Member since</span>
+                        <span class="stat-value">{{ member_since }}</span>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between gap-1">
+                    <div class="col">
+                        <a href="{% url 'posts:facebook_instagram_config' %}" class="btn btn-primary">Fb & Insta Config</a>
+                    </div>
+                    <div class="col">
+                        <a href="{% url 'posts:linkedin_config' %}" class="btn btn-primary">LinkedIn Config</a>
+                    </div>
                 </div>
             </div>
-            <div class="stats-grid">
-                <div class="stat-item posts" id="posts-stat" data-endpoint="{% url 'posts:your_feed' %}">
-                    <span class="stat-label">Posts</span>
-                    <span class="stat-value">{{ post_count }}</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">Friends</span>
-                    <span class="stat-value">{{ friends_count }}</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">Member since</span>
-                    <span class="stat-value">{{ member_since }}</span>
-                </div>
-            </div>
-            <div class=" d-flex justify-content-between gap-1">
-                <div class="col"> <a href= "{% url 'posts:facebook_instagram_config'  %}" class="btn btn-primary">Fb & Insta Config</a>
-</div>
-                 <div class="col"><a href= "{% url 'posts:linkedin_config'  %}" class="btn btn-primary">LinkedIn Config </a>
-</div>
-            </div>
-        </div></div>
+        </div>
         <div class="col-md-8">
-        <!-- Edit Profile Section -->
-        <div class="edit-profile">
-            <h2>Edit Profile</h2>
-            
-            <div class="tabs">
-                <a href="#" class="tab active">Basic Info</a>
-                <a href="#" class="tab">Privacy</a>
-                <a href="#" class="tab">Notifications</a>
+            <!-- Edit Profile Section -->
+            <div class="edit-profile">
+                <h2>Edit Profile</h2>
+                <div class="tabs">
+                    <a href="#" class="tab active">Basic Info</a>
+                    <a href="#" class="tab">Privacy</a>
+                    <a href="#" class="tab">Notifications</a>
+                </div>
+                <form method="POST" enctype="multipart/form-data" id="profile-form">
+                    {% csrf_token %}
+                    <!-- Hidden profile photo field -->
+                    <div class="hidden-file-input">
+                        <input type="file" name="{{ form.profile_photo.name }}" id="{{ form.profile_photo.id_for_label }}" class="form-control">
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Username</label>
+                            <input type="text" name="{{ form.username.name }}" id="{{ form.username.id_for_label }}" value="{{ form.username.value|default_if_none:'' }}" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" name="{{ form.first_name.name }}" id="{{ form.first_name.id_for_label }}" value="{{ form.first_name.value|default_if_none:'' }}" class="form-control">
+                        </div>
+                        <div class="form-group full-width">
+                            <label class="form-label">Bio</label>
+                            <textarea name="{{ form.bio.name }}" id="{{ form.bio.id_for_label }}" class="form-control">{{ form.bio.value|default_if_none:'' }}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">🌐 Website</label>
+                            <input type="url" name="{{ form.website.name }}" id="{{ form.website.id_for_label }}" value="{{ form.website.value|default_if_none:'' }}" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">📍 Location</label>
+                            <input type="text" name="{{ form.location.name }}" id="{{ form.location.id_for_label }}" value="{{ form.location.value|default_if_none:'' }}" class="form-control">
+                        </div>
+                    </div>
+                    <button type="submit" class="save-btn">
+                        <span>💾</span> Save Changes
+                    </button>
+                </form>
             </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Store original image data
+let originalImageSrc = null;
+let hasUnsavedChanges = false;
+
+// Initialize original image source
+document.addEventListener('DOMContentLoaded', function() {
+    const avatarImg = document.getElementById('avatar-img');
+    if (avatarImg) {
+        originalImageSrc = avatarImg.src;
+    }
+});
+
+// Show image modal function
+function showImageModal() {
+    const avatarImg = document.getElementById('avatar-img');
+    const avatarLetter = document.getElementById('avatar-letter');
+    const modal = document.getElementById('imageModal');
+    const modalImage = document.getElementById('modalImage');
+    
+    if (avatarImg) {
+        modalImage.src = avatarImg.src;
+        modal.classList.add('active');
+    } else if (avatarLetter) {
+        // For letter avatars, we can show a larger version
+        const canvas = document.createElement('canvas');
+        canvas.width = 200;
+        canvas.height = 200;
+        const ctx = canvas.getContext('2d');
+        
+        // Create gradient background
+        const gradient = ctx.createLinearGradient(0, 0, 200, 200);
+        gradient.addColorStop(0, '#667eea');
+        gradient.addColorStop(1, '#764ba2');
+        
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, 200, 200);
+        
+        // Add letter
+        ctx.fillStyle = 'white';
+        ctx.font = 'bold 80px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(avatarLetter.textContent, 100, 100);
+        
+        modalImage.src = canvas.toDataURL();
+        modal.classList.add('active');
+    }
+}
+
+// Close modal
+document.getElementById('closeModal').addEventListener('click', function() {
+    document.getElementById('imageModal').classList.remove('active');
+});
+
+// Close modal when clicking overlay
+document.getElementById('imageModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        this.classList.remove('active');
+    }
+});
+
+// Profile photo upload handling
+const profilePhotoInput = document.getElementById('id_profile_photo');
+if (profilePhotoInput) {
+    profilePhotoInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                alert('Please select a valid image file.');
+                return;
+            }
             
-           <form method="POST" enctype="multipart/form-data" id="profile-form">
-    {% csrf_token %}
-    <!-- Hidden profile photo field -->
-    <div class="hidden-file-input">
-        <input type="file" name="{{ form.profile_photo.name }}" id="{{ form.profile_photo.id_for_label }}" class="form-control">
-    </div>
-    <div class="form-grid">
-        <div class="form-group">
-            <label class="form-label">Username</label>
-            <input type="text" name="{{ form.username.name }}" id="{{ form.username.id_for_label }}" value="{{ form.username.value|default_if_none:'' }}" class="form-control">
-        </div>
-        <div class="form-group">
-            <label class="form-label">Full Name</label>
-            <input type="text" name="{{ form.first_name.name }}" id="{{ form.first_name.id_for_label }}" value="{{ form.first_name.value|default_if_none:'' }}" class="form-control">
-        </div>
-        <div class="form-group full-width">
-            <label class="form-label">Bio</label>
-            <textarea name="{{ form.bio.name }}" id="{{ form.bio.id_for_label }}" class="form-control">{{ form.bio.value|default_if_none:'' }}</textarea>
-        </div>
-        <div class="form-group">
-            <label class="form-label">🌐 Website</label>
-            <input type="url" name="{{ form.website.name }}" id="{{ form.website.id_for_label }}" value="{{ form.website.value|default_if_none:'' }}" class="form-control">
-        </div>
-        <div class="form-group">
-            <label class="form-label">📍 Location</label>
-            <input type="text" name="{{ form.location.name }}" id="{{ form.location.id_for_label }}" value="{{ form.location.value|default_if_none:'' }}" class="form-control">
-        </div>
-    </div>
-    <button type="submit" class="save-btn">
-        <span>💾</span>
-        Save Changes
-    </button>
-</form>
-        </div></div></div>
-    </div>
-
-    <script>
-        // Profile photo upload handling
-        const profilePhotoInput = document.getElementById('id_profile_photo');
-        if (profilePhotoInput) {
-            profilePhotoInput.addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    // Validate file type
-                    if (!file.type.startsWith('image/')) {
-                        alert('Please select a valid image file.');
-                        return;
-                    }
-
-                    // Validate file size (optional - limit to 5MB)
-                    if (file.size > 5 * 1024 * 1024) {
-                        alert('File size must be less than 5MB.');
-                        return;
-                    }
-
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const avatarDisplay = document.getElementById('avatar-display');
-                        avatarDisplay.innerHTML = '';
-
-                        const img = document.createElement('img');
-                        img.src = e.target.result;
-                        img.alt = 'Profile Photo';
-                        img.id = 'avatar-img';
-                        img.style.width = '80px';
-                        img.style.height = '80px';
-                        img.style.borderRadius = '50%';
-                        img.style.objectFit = 'cover';
-
-                        avatarDisplay.appendChild(img);
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
+            // Validate file size (limit to 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('File size must be less than 5MB.');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const avatarDisplay = document.getElementById('avatar-display');
+                
+                avatarDisplay.innerHTML = '';
+                
+                // Create new image element with proper styling for immediate preview
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.alt = 'Profile Photo';
+                img.id = 'avatar-img';
+                // Apply the exact same styles as the CSS class .avatar-circle1 img
+                img.style.width = '80px';
+                img.style.height = '80px';
+                img.style.borderRadius = '50%';
+                img.style.objectFit = 'cover';
+                img.style.display = 'block'; // Ensure proper display
+                
+                // Add image to display
+                avatarDisplay.appendChild(img);
+                
+                // Create and add preview indicator
+                const indicator = document.createElement('div');
+                indicator.className = 'preview-indicator';
+                indicator.id = 'previewIndicator';
+                indicator.textContent = '!';
+                indicator.title = 'Unsaved changes';
+                indicator.style.position = 'absolute';
+                indicator.style.top = '-5px';
+                indicator.style.right = '-5px';
+                indicator.style.background = '#28a745';
+                indicator.style.color = 'white';
+                indicator.style.borderRadius = '50%';
+                indicator.style.width = '20px';
+                indicator.style.height = '20px';
+                indicator.style.display = 'flex';
+                indicator.style.alignItems = 'center';
+                indicator.style.justifyContent = 'center';
+                indicator.style.fontSize = '12px';
+                indicator.style.fontWeight = 'bold';
+                indicator.style.zIndex = '10';
+                
+                // Make sure avatar-display has relative positioning for the indicator
+                avatarDisplay.style.position = 'relative';
+                avatarDisplay.appendChild(indicator);
+                
+                // Mark as having unsaved changes
+                hasUnsavedChanges = true;
+                
+                // Update click handler for new image
+                avatarDisplay.onclick = showImageModal;
+            };
+            reader.readAsDataURL(file);
         }
+    });
+}
 
-        // Form submission feedback
-        document.getElementById('profile-form').addEventListener('submit', function(e) {
-            const submitBtn = document.querySelector('.save-btn');
-            submitBtn.innerHTML = '<span class="spinner"></span> Saving...';
-            submitBtn.disabled = true;
-        });
+// Form submission handling
+document.getElementById('profile-form').addEventListener('submit', function(e) {
+    const submitBtn = document.querySelector('.save-btn');
+    submitBtn.innerHTML = '<span class="spinner"></span> Saving...';
+    submitBtn.disabled = true;
+    
+    // Reset unsaved changes flag
+    hasUnsavedChanges = false;
+});
 
-        // Posts button click handler
-        const postsStat = document.getElementById('posts-stat');
-        if (postsStat) {
-            postsStat.addEventListener('click', function() {
-                const endpoint = this.getAttribute('data-endpoint');
-                if (endpoint) {
-                    window.location.href = endpoint;
-                }
-            });
+// Reset to original image if user navigates away without saving
+window.addEventListener('beforeunload', function(e) {
+    if (hasUnsavedChanges) {
+        const confirmationMessage = 'You have unsaved changes. Are you sure you want to leave?';
+        e.returnValue = confirmationMessage;
+        return confirmationMessage;
+    }
+});
+
+// Reset image function (can be called if needed)
+function resetToOriginalImage() {
+    if (originalImageSrc && hasUnsavedChanges) {
+        const avatarDisplay = document.getElementById('avatar-display');
+        const previewIndicator = document.getElementById('previewIndicator');
+        
+        avatarDisplay.innerHTML = '';
+        
+        const img = document.createElement('img');
+        img.src = originalImageSrc;
+        img.alt = 'Profile Photo';
+        img.id = 'avatar-img';
+        img.style.width = '80px';
+        img.style.height = '80px';
+        img.style.borderRadius = '50%';
+        img.style.objectFit = 'cover';
+        
+        avatarDisplay.appendChild(img);
+        avatarDisplay.onclick = showImageModal;
+        
+        // Clear file input
+        profilePhotoInput.value = '';
+        hasUnsavedChanges = false;
+    }
+}
+
+// Posts button click handler
+const postsStat = document.getElementById('posts-stat');
+if (postsStat) {
+    postsStat.addEventListener('click', function() {
+        const endpoint = this.getAttribute('data-endpoint');
+        if (endpoint) {
+            window.location.href = endpoint;
         }
+    });
+}
 
-        // Make tabs clickable (placeholder functionality)
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', function(e) {
-                e.preventDefault();
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                this.classList.add('active');
-                // Here you would add logic to switch tab content
-                // For now it's just UI without functionality
-            });
-        });
-    </script>
+// Make tabs clickable (placeholder functionality)
+document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', function(e) {
+        e.preventDefault();
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+        // Here you would add logic to switch tab content
+        // For now it's just UI without functionality
+    });
+});
+</script>
+
 {% endblock %}

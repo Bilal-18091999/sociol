@@ -1,6 +1,24 @@
 {% extends "base.html" %}
 {% block content %}
-    <style>
+<style>
+    .file-preview {
+    position: relative; /* Establish positioning context */
+    display: inline-block; /* Fit container to image size */
+}
+.download-icon {
+    position: absolute; /* Position relative to .file-preview */
+    top: 5px;          /* Distance from top edge */
+    right: 5px;        /* Distance from right edge */
+    background: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
+    border-radius: 50%; /* Circular button */
+    padding: 5px;       /* Space around icon */
+    cursor: pointer;
+    border: none;       /* Remove default button styling */
+    transition: background 0.2s; /* Smooth hover effect */
+}
+.download-icon:hover {
+    background: rgba(255, 255, 255, 0.95); /* Brighter on hover */
+}
 .bg-red-500 {
     --tw-bg-opacity: 1;
     background-color: rgb(239 68 68 / var(--tw-bg-opacity, 1));
@@ -17,416 +35,825 @@
     right: 18px;
     z-index: 10;
 }
+.friends-search-input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    font-size: 0.9em;
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+.friends-search-input:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
 .header-btn {
     width: 36px;
     height: 36px;
     border: none;
     background: none;
     border-radius: 50%;
-    display: flex
-;
+    display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: background-color 0.2s;
 }
-        .chat-container {
-            display: flex;
-            width: 100%;
-            max-width: 1200px;
-            margin: auto;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            background-color: #fff;
-            height: 80vh;
-        }
-        .friends-list {
-            width: 300px;
-            min-width: 250px;
-            border-right: 1px solid #eee;
-            background-color: #f8f9fa;
-            overflow-y: auto;
-            padding: 10px 0;
-            box-sizing: border-box;
-        }
-        .friends-list h2 {
-            padding: 15px 20px;
-            margin: 0;
-            color: #333;
-            font-size: 1.3em;
-            border-bottom: 1px solid #eee;
-            background-color: #fff;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-        .friend-item {
-            display: flex;
-            align-items: center;
-            padding: 15px 20px;
-            cursor: pointer;
-            border-bottom: 1px solid #eee;
-            transition: background-color 0.2s ease, transform 0.1s ease;
-        }
-        .friend-item:hover {
-            background-color: #e9ecef;
-            transform: translateY(-1px);
-        }
-        .friend-item.active {
-            background-color: #e0e0e0;
-            border-left: 4px solid #007bff;
-            padding-left: 16px;
-        }
-        .friend-item img {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            margin-right: 15px;
-            object-fit: cover;
-            border: 2px solid #ddd;
-            flex-shrink: 0;
-        }
-        .avatar-circle {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            margin-right: 15px;
-            background-color: #007bff;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 1.2em;
-            border: 2px solid #ddd;
-        }
-        .friend-item-info {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-        .friend-item-info .name-and-count {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-        }
-        .friend-item-info span {
-            font-weight: 600;
-            color: #333;
-            font-size: 1.05em;
-        }
-        .unread-count-badge {
-            background-color: #28a745;
-            color: white;
-            font-size: 0.75em;
-            font-weight: bold;
-            padding: 3px 8px;
-            border-radius: 12px;
-            margin-left: 10px;
-            min-width: 20px;
-            text-align: center;
-            display: inline-block;
-        }
-        .friend-item-status {
-            font-size: 0.8em;
-            color: #888;
-            margin-top: 2px;
-        }
-        .friend-item-status.online {
-            color: #28a745;
-            font-weight: 600;
-        }
-        .chat-area {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-        }
-        .chat-header {
-            padding: 15px 20px;
-            border-bottom: 1px solid #eee;
-            background-color: #f8f9fa;
-            display: flex;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-        .chat-header img {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            margin-right: 15px;
-            object-fit: cover;
-            border: 2px solid #ddd;
-        }
-        .chat-header-info {
-            display: flex;
-            flex-direction: column;
-        }
-        .chat-header h3 {
-            margin: 0;
-            color: #333;
-            font-size: 1.2em;
-        }
-        .chat-header-status {
-            font-size: 0.85em;
-            color: #666;
-            margin-top: 2px;
-        }
-        .chat-header-status.online {
-            color: #28a745;
-            font-weight: 600;
-        }
-        .messages-display {
-            flex-grow: 1;
-            padding: 20px;
-            overflow-y: auto;
-            background-color: #fdfdfd;
-            display: flex;
-            flex-direction: column;
-        }
-        .message-bubble {
-            max-width: 70%;
-            padding: 12px 18px;
-            border-radius: 20px;
-            margin-bottom: 10px;
-            line-height: 1.4;
-            word-wrap: break-word;
-            font-size: 0.95em;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-        }
-        .message-bubble.sent {
-            background-color: #ffffff;
-            color: #333;
-            align-self: flex-end;
-            margin-left: auto;
-            border: 1px solid #ddd;
-            border-bottom-right-radius: 5px;
-        }
-        .message-bubble.received {
-            background-color: #e4e6eb;
-            color: #333;
-            align-self: flex-start;
-            margin-right: auto;
-            border-bottom-left-radius: 5px;
-        }
-        .message-timestamp {
-            font-size: 0.7em;
-            color: #888;
-            margin-top: 5px;
-            text-align: right;
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            gap: 5px;
-        }
-        .message-bubble.received .message-timestamp {
-            color: #666;
-            text-align: left;
-            justify-content: flex-start;
-        }
-        .message-status {
-            font-size: 0.8em;
-            vertical-align: middle;
-            display: inline-block;
-            line-height: 1;
-        }
-        .message-status .tick {
-            color: #333;
-        }
-        .message-bubble.sent .message-status .tick.delivered {
-            color: #333;
-        }
-        .message-bubble.sent .message-status .tick.read {
-            color: #007bff;
-            font-weight: bold;
-        }
-        .message-input-area {
-            padding: 15px 20px;
-            border-top: 1px solid #eee;
-            display: flex;
-            background-color: #f8f9fa;
-            align-items: center;
-            position: sticky;
-            bottom: 0;
-        }
-        .message-input-area input[type="text"] {
-            flex-grow: 1;
-            padding: 12px 18px;
-            border: 1px solid #ddd;
-            border-radius: 25px;
-            font-size: 1em;
-            margin-right: 10px;
-            outline: none;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
-        }
-        .message-input-area input[type="text"]:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
-        }
-        .message-input-area button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 1em;
-            font-weight: 600;
-            transition: background-color 0.2s ease, transform 0.1s ease;
-        }
-        .message-input-area button:hover {
-            background-color: #0056b3;
-            transform: translateY(-1px);
-        }
-        .message-input-area button:active {
-            transform: translateY(0);
-        }
-        .no-chat-selected {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-grow: 1;
-            color: #888;
-            font-size: 1.2em;
-            text-align: center;
-            padding: 20px;
-        }
-        .mobile-back-button {
-            display: none;
-            margin-right: 15px;
-            cursor: pointer;
-            font-size: 1.5em;
-            color: #007bff;
-        }
-        .loading-indicator {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
-            color: #888;
-            font-size: 1.1em;
-        }
-
-        @media (max-width: 768px) {
-            .chat-container {
-                flex-direction: column;
-                height: 100vh;
-                border-radius: 0;
-                box-shadow: none;
-            }
-            
-            .friends-list {
-                width: 100%;
-                height: 40vh;
-                overflow-y: auto;
-                border-right: none;
-            }
-            
-            .chat-area {
-                height: 60vh;
-                display: none;
-            }
-            
-            .chat-area.active {
-                display: flex;
-            }
-            
-            .friends-list.hidden {
-                display: none;
-            }
-            
-            .mobile-back-button {
-                display: block;
-            }
-            
-            .friend-item {
-                padding: 12px 15px;
-            }
-            
-            .friend-item img {
-                width: 40px;
-                height: 40px;
-                margin-right: 12px;
-            }
-            
-            .avatar-circle {
-                width: 40px;
-                height: 40px;
-                margin-right: 12px;
-                font-size: 1.1em;
-            }
-            
-            .friend-item-info span {
-                font-size: 1em;
-            }
-            
-            .chat-header {
-                padding: 12px 15px;
-            }
-            
-            .messages-display {
-                padding: 15px;
-            }
-            
-            .message-input-area {
-                padding: 12px 15px;
-            }
-          
-            .messages-display {
-        padding: 15px;
-        max-height: 488px;
-    }
-   
-    .message-input-area button {
+.header-btn:hover {
+    background-color: #f0f0f0;
+}
+.chat-container {
+    display: flex;
+    width: 100%;
+    max-width: 1200px;
+    margin: auto;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    background-color: #fff;
+    height: 80vh;
+}
+.friends-list {
+    width: 300px;
+    min-width: 250px;
+    border-right: 1px solid #eee;
+    background-color: #f8f9fa;
+    overflow-y: auto;
+    padding: 10px 0;
+    box-sizing: border-box;
+}
+.friends-list h2 {
+    padding: 15px 20px;
+    margin: 0;
+    color: #333;
+    font-size: 1.3em;
+    border-bottom: 1px solid #eee;
+    background-color: #fff;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+.friend-item {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+.friend-item:hover {
+    background-color: #e9ecef;
+    transform: translateY(-1px);
+}
+.friend-item.active {
+    background-color: #e0e0e0;
+    border-left: 4px solid #007bff;
+    padding-left: 16px;
+}
+.friend-item img {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    margin-right: 15px;
+    object-fit: cover;
+    border: 2px solid #ddd;
+    flex-shrink: 0;
+}
+.avatar-circle {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    margin-right: 15px;
+    background-color: #007bff;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.2em;
+    border: 2px solid #ddd;
+}
+.friend-item-info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: white;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1000;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #ddd;
+}
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    font-size: 14px;
+    transition: background-color 0.2s;
+}
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
+}
+.dropdown.show .dropdown-content {
+    display: block;
+}
+.friend-item-info .name-and-count {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+.friend-item-info span {
+    font-weight: 600;
+    color: #333;
+    font-size: 1.05em;
+}
+.unread-count-badge {
+    background-color: #28a745;
+    color: white;
+    font-size: 0.75em;
+    font-weight: bold;
+    padding: 3px 8px;
+    border-radius: 12px;
+    margin-left: 10px;
+    min-width: 20px;
+    text-align: center;
+    display: inline-block;
+}
+.friend-item-status {
+    font-size: 0.8em;
+    color: #888;
+    margin-top: 2px;
+}
+.friend-item-status.online {
+    color: #28a745;
+    font-weight: 600;
+}
+.chat-area {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    height: 100%;
+}
+.chat-header {
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+    background-color: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    flex-shrink: 0;
+}
+.chat-header-left {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+}
+.chat-header img {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    margin-right: 15px;
+    object-fit: cover;
+    border: 2px solid #ddd;
+}
+.chat-header-info {
+    display: flex;
+    flex-direction: column;
+}
+.chat-header h3 {
+    margin: 0;
+    color: #333;
+    font-size: 1.2em;
+}
+.chat-header-status {
+    font-size: 0.85em;
+    color: #666;
+    margin-top: 2px;
+}
+.chat-header-status.online {
+    color: #28a745;
+    font-weight: 600;
+}
+.messages-display {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background-color: #fdfdfd;
+    display: flex;
+    flex-direction: column;
+    min-height: 0; /* Important for flexbox to shrink properly */
+}
+.message-bubble {
+    max-width: 70%;
+    padding: 12px 18px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+    line-height: 1.4;
+    word-wrap: break-word;
+    font-size: 0.95em;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    position: relative;
+}
+.message-bubble.sent {
+    background-color: #dcf8c6;
+    color: #333;
+    align-self: flex-end;
+    margin-left: auto;
+    border-bottom-right-radius: 5px;
+}
+.message-bubble.received {
+    background-color: #e4e6eb;
+    color: #333;
+    align-self: flex-start;
+    margin-right: auto;
+    border-bottom-left-radius: 5px;
+}
+.message-bubble.deleted {
+    background-color: #f8f9fa;
+    color: #6c757d;
+    font-style: italic;
+    opacity: 0.7;
+}
+/* Message context menu */
+.message-menu {
+    position: absolute;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 1000;
+    min-width: 150px;
+    display: none;
+}
+.message-menu-item {
+    padding: 10px 15px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+    transition: background-color 0.2s;
+}
+.message-menu-item:hover {
+    background-color: #f8f9fa;
+}
+.message-menu-item:last-child {
+    border-bottom: none;
+}
+.message-menu-item.delete-everyone {
+    color: #dc3545;
+}
+/* Added styles for file messages */
+.message-bubble.file-message {
+    padding: 8px;
+    max-width: 80%;
+}
+.file-preview {
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 8px;
+    max-width: 300px;
+    max-height: 300px;
+}
+.file-preview img {
+    max-width: 100%;
+    max-height: 300px;
+    height: auto;
+    display: block;
+    border-radius: 8px;
+    object-fit: contain;
+}
+.file-preview video {
+    max-width: 100%;
+    max-height: 300px;
+    height: auto;
+    display: block;
+    border-radius: 8px;
+}
+.file-info {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    margin-bottom: 8px;
+}
+.file-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    font-size: 18px;
+    color: white;
+}
+.file-icon.document {
+    background-color: #dc3545;
+}
+.file-icon.audio {
+    background-color: #28a745;
+}
+.file-icon.video {
+    background-color: #6f42c1;
+}
+.file-icon.image {
+    background-color: #007bff;
+}
+.file-icon.voice {
+    background-color: #17a2b8;
+}
+.file-details {
+    flex-grow: 1;
+}
+.file-name {
+    font-weight: 600;
+    margin-bottom: 2px;
+    word-break: break-all;
+}
+.file-size {
+    font-size: 0.8em;
+    opacity: 0.8;
+}
+.file-caption {
+    padding: 8px 12px;
+    font-size: 0.9em;
+}
+.download-btn {
     background-color: #007bff;
     color: white;
     border: none;
-    padding: 5px 5px;
-    border-radius: 25px;
+    border-radius: 6px;
+    padding: 6px 12px;
     cursor: pointer;
-    font-size: 13px;
-    font-weight
-
-: 600;
-    transition: background-color 0.2s ease, transform 0.1s ease;
+    font-size: 0.8em;
+    transition: background-color 0.2s;
+    margin-top: 8px;
 }
-        .message-input-area input[type="text"] {
+.download-btn:hover {
+    background-color: #0056b3;
+}
+/* Voice message styles */
+.voice-message {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    max-width: 300px;
+}
+.voice-play-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+}
+.voice-waveform {
     flex-grow: 1;
-    padding: 5px 5px;
+    height: 30px;
+    background: linear-gradient(90deg, #007bff 0%, #007bff 50%, #ccc 50%, #ccc 100%);
+    border-radius: 15px;
+    position: relative;
+}
+.voice-duration {
+    font-size: 0.8em;
+    opacity: 0.8;
+}
+.message-timestamp {
+    font-size: 0.7em;
+    color: #888;
+    margin-top: 5px;
+    text-align: right;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 5px;
+}
+.message-bubble.received .message-timestamp {
+    color: #666;
+    text-align: left;
+    justify-content: flex-start;
+}
+.message-status {
+    font-size: 0.8em;
+    vertical-align: middle;
+    display: inline-block;
+    line-height: 1;
+}
+.message-status .tick {
+    color: #333;
+}
+.message-bubble.sent .message-status .tick.delivered {
+    color: #333;
+}
+.message-bubble.sent .message-status .tick.read {
+    color: #007bff;
+    font-weight: bold;
+}
+.message-input-area {
+    padding: 15px 20px;
+    border-top: 1px solid #eee;
+    display: flex;
+    background-color: #f8f9fa;
+    align-items: flex-end;
+    position: sticky;
+    bottom: 0;
+    gap: 10px;
+    flex-shrink: 0;
+}
+/* Updated input area for file upload and voice recording */
+.input-container {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.text-input-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.message-input-area input[type="text"] {
+    flex-grow: 1;
+    padding: 12px 18px;
     border: 1px solid #ddd;
     border-radius: 25px;
-    
-    margin-right: 10px;
+    font-size: 1em;
     outline: none;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
- .main-content {
-            margin-left: 0 !important;
-            padding-bottom: 60px;
-            padding:0px;
-        }
-        }
-              .header-actions {
-    display: flex
-;
-    align-items
-: center;
-   gap: 1px; 
+.message-input-area input[type="text"]:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
 }
-
-    </style>
-
-    <div class="chat-container">
-        <div class="friends-list {% if selected_friend %}hidden{% endif %}" id="friends-list">
-            <h2>Friends</h2>
-            {% for friend_data in friends %}
-                {% with friend=friend_data.user unread_count=friend_data.unread_count %}
+.file-input-container {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+}
+.file-input-btn {
+    background-color: #f8f9fa;
+    color: #54656f;
+    border: none;
+    padding: 12px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.2em;
+    transition: background-color 0.2s ease;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.file-input-btn:hover {
+    background-color: #e9ecef;
+}
+.file-input-container input[type="file"] {
+    position: absolute;
+    left: -9999px;
+    opacity: 0;
+}
+/* Voice recording button */
+.voice-record-btn {
+    background-color: #f8f9fa;
+    color: #54656f;
+    border: none;
+    padding: 12px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.2em;
+    transition: background-color 0.2s ease;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.voice-record-btn:hover {
+    background-color: #e9ecef;
+}
+.voice-record-btn.recording {
+    background-color: #dc3545;
+    color: white;
+    animation: pulse 1s infinite;
+}
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+.voice-recording-indicator {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background-color: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 8px;
+    margin-bottom: 8px;
+}
+.voice-recording-indicator.active {
+    display: flex;
+}
+.recording-timer {
+    font-weight: bold;
+    color: #dc3545;
+}
+.cancel-recording-btn {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8em;
+}
+.message-input-area button.send-btn {
+    background-color: #0084ff;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.2em;
+    font-weight: 600;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.message-input-area button.send-btn:hover {
+    background-color: #0078e6;
+    transform: translateY(-1px);
+}
+.message-input-area button.send-btn:active {
+    transform: translateY(0);
+}
+.file-preview-container {
+    display: none;
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 8px;
+}
+.file-preview-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.file-preview-info {
+    flex-grow: 1;
+}
+.file-preview-name {
+    font-weight: 600;
+    font-size: 0.9em;
+    margin-bottom: 2px;
+}
+.file-preview-size {
+    font-size: 0.8em;
+    color: #666;
+}
+.remove-file-btn {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    font-size: 0.8em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.no-chat-selected {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+    color: #888;
+    font-size: 1.2em;
+    text-align: center;
+    padding: 20px;
+}
+.mobile-back-button {
+    display: none;
+    margin-right: 15px;
+    cursor: pointer;
+    font-size: 1.5em;
+    color: #007bff;
+}
+.loading-indicator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    color: #888;
+    font-size: 1.1em;
+}
+/* Selection mode styles */
+.selection-toolbar {
+    display: none;
+    padding: 10px 15px;
+    background-color: #f0f0f0;
+    border-top: 1px solid #ddd;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    bottom: 70px;
+    z-index: 5;
+}
+.selection-toolbar.active {
+    display: flex;
+}
+.selection-count {
+    font-weight: 600;
+    color: #333;
+}
+.selection-actions {
+    display: flex;
+    gap: 10px;
+}
+.selection-toolbar-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.2s;
+}
+.selection-toolbar-btn:hover {
+    background-color: #0056b3;
+}
+.selection-toolbar-btn.cancel {
+    background-color: #6c757d;
+}
+.selection-toolbar-btn.cancel:hover {
+    background-color: #5a6268;
+}
+.message-checkbox {
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: white;
+    border: 2px solid #007bff;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 5;
+}
+.message-checkbox input {
+    margin: 0;
+}
+.message-bubble.selected {
+    border: 2px solid #007bff;
+}
+.selection-mode .message-checkbox {
+    display: flex;
+}
+.selection-mode .message-bubble {
+    cursor: pointer;
+}
+.selection-mode .message-bubble:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+@media (max-width: 768px) {
+    .chat-container {
+        flex-direction: column;
+        height: 100vh;
+        border-radius: 0;
+        box-shadow: none;
+    }
+    .friends-list {
+        width: 100%;
+        height: 40vh;
+        overflow-y: auto;
+        border-right: none;
+    }
+    .chat-area {
+        height: 60vh;
+        display: none;
+    }
+    .chat-area.active {
+        display: flex;
+    }
+    .friends-list.hidden {
+        display: none;
+    }
+    .mobile-back-button {
+        display: block;
+    }
+    .friend-item {
+        padding: 12px 15px;
+    }
+    .friend-item img {
+        width: 40px;
+        height: 40px;
+        margin-right: 12px;
+    }
+    .avatar-circle {
+        width: 40px;
+        height: 40px;
+        margin-right: 12px;
+        font-size: 1.1em;
+    }
+    .friend-item-info span {
+        font-size: 1em;
+    }
+    .chat-header {
+        padding: 12px 15px;
+    }
+    .messages-display {
+        padding: 15px;
+        max-height: 488px;
+    }
+    .message-input-area {
+        padding: 12px 15px;
+    }
+    .message-input-area button.send-btn {
+        padding: 5px 5px;
+        font-size: 13px;
+    }
+    .message-input-area input[type="text"] {
+        padding: 5px 5px;
+    }
+    .main-content {
+        margin-left: 0 !important;
+        padding-bottom: 60px;
+        padding: 0px;
+    }
+    .selection-toolbar {
+        bottom: 60px;
+    }
+    /* Adjust media sizes for mobile */
+    .file-preview {
+        max-width: 200px;
+        max-height: 200px;
+    }
+    .file-preview img {
+        max-height: 200px;
+    }
+    .file-preview video {
+        max-height: 200px;
+    }
+    .voice-message {
+        max-width: 200px;
+    }
+}
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1px;
+}
+.hidden {
+    display: none !important;
+}
+</style>
+<div class="chat-container">
+    <div class="friends-list {% if selected_friend %}hidden{% endif %}" id="friends-list">
+        <h2>Friends</h2>
+         <div class="friends-search-container">
+            <input type="text" class="friends-search-input" id="friends-search-input" placeholder="Search friends...">
+        </div>
+        {% for friend_data in friends %}
+            {% with friend=friend_data.user unread_count=friend_data.unread_count %}
                 <div class="friend-item {% if selected_friend and friend.id == selected_friend.id %}active{% endif %}" 
                      data-friend-id="{{ friend.id }}" 
                      data-friend-username="{{ friend.username }}" 
@@ -448,434 +875,1011 @@
                                 <span class="unread-count-badge" id="unread-count-{{ friend.id }}">{{ unread_count }}</span>
                             {% endif %}
                         </div>
-                        {% comment %} <div class="friend-item-status" id="friend-status-{{ friend.id }}">
-                            {% if friend.is_online %}
-                                <span class="online">Online</span>
-                            {% else %}
-                                Last seen {{ friend.last_seen|date:"H:i" }}
-                            {% endif %}
-                        </div> {% endcomment %}
                     </div>
                 </div>
-                {% endwith %}
-            {% empty %}
-                <p style="padding: 20px; text-align: center; color: #666;">No friends found.</p>
-            {% endfor %}
-        </div>
-        
-        <div class="chat-area" id="chat-area">
-            <div class="no-chat-selected" id="no-chat-selected">
-                <p>Select a friend from the list to start chatting.</p>
-            </div>
+            {% endwith %}
+        {% empty %}
+            <p style="padding: 20px; text-align: center; color: #666;">No friends found.</p>
+        {% endfor %}
+    </div>
+    <div class="chat-area" id="chat-area">
+        <div class="no-chat-selected" id="no-chat-selected">
+            <p>Select a friend from the list to start chatting.</p>
         </div>
     </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Main variables
-            const userId = {{ request.user.id }};
-            const initialFriendId = {{ selected_friend.id|default:'null' }};
-            const friendsList = document.getElementById('friends-list');
-            const chatArea = document.getElementById('chat-area');
-            const noChatSelected = document.getElementById('no-chat-selected');
+</div>
+<!-- Message context menu -->
+<div class="message-menu" id="message-menu">
+    <div class="message-menu-item" id="delete-for-me">Delete for me</div>
+    <div class="message-menu-item delete-everyone" id="delete-for-everyone">Delete for everyone</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Main variables
+    const userId = {{ request.user.id }};
+    const initialFriendId = {{ selected_friend.id|default:'null' }};
+    const friendsList = document.getElementById('friends-list');
+    const chatArea = document.getElementById('chat-area');
+    const noChatSelected = document.getElementById('no-chat-selected');
+    const messageMenu = document.getElementById('message-menu');
+    
+    let currentFriendId = initialFriendId;
+    let messagePollingInterval = null;
+    let userStatusPollingInterval = null;
+    let friendStatusPollingInterval = null;
+    let selectedFile = null;
+    let currentMessageId = null;
+    
+    // Voice recording variables
+    let mediaRecorder = null;
+    let audioChunks = [];
+    let isRecording = false;
+    let recordingStartTime = null;
+    let recordingTimer = null;
+    let recordingCanceled = false;
+    
+    // Selection mode variables
+    let selectionMode = false;
+    let selectedMessages = new Set();
+    
+    // Initialize the chat
+    initChat();
+    const friendsSearchInput = document.getElementById('friends-search-input');
+    if (friendsSearchInput) {
+        friendsSearchInput.addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase().trim();
+            const friendItems = document.querySelectorAll('.friend-item');
             
-            let currentFriendId = initialFriendId;
-            let messagePollingInterval = null;
-            let userStatusPollingInterval = null;
-            let friendStatusPollingInterval = null;
-
-            // Initialize the chat
-            initChat();
+            friendItems.forEach(item => {
+                const username = item.dataset.friendUsername.toLowerCase();
+                if (username.includes(searchTerm)) {
+                    item.classList.remove('hidden');
+                } else {
+                    item.classList.add('hidden');
+                }
+            });
+        });
+    }
+    // Event delegation for friend items
+    friendsList.addEventListener('click', function(e) {
+        const friendItem = e.target.closest('.friend-item');
+        if (friendItem) {
+            e.preventDefault();
+            const friendId = parseInt(friendItem.dataset.friendId);
+            const friendUsername = friendItem.dataset.friendUsername;
+            const profilePhoto = friendItem.querySelector('[data-friend-profile-photo]').dataset.friendProfilePhoto;
+            const isOnline = friendItem.dataset.friendIsOnline === 'true';
+            const lastSeen = friendItem.dataset.friendLastSeen;
+            // Update URL without reloading
+            window.history.pushState({ friendId }, '', `/chat/${friendId}/`);
+            handleFriendSelection(friendId, friendUsername, profilePhoto, isOnline, lastSeen, friendItem);
+        }
+    });
+    // Message context menu
+    document.addEventListener('contextmenu', function(e) {
+        const messageBubble = e.target.closest('.message-bubble');
+        if (messageBubble && messageBubble.dataset.messageId && !selectionMode) {
+            e.preventDefault();
+            currentMessageId = parseInt(messageBubble.dataset.messageId);
+            const isSent = messageBubble.classList.contains('sent');
             
-            // Event delegation for friend items
-            friendsList.addEventListener('click', function(e) {
-                const friendItem = e.target.closest('.friend-item');
+            // Show/hide delete for everyone option based on message age and sender
+            const deleteEveryoneOption = document.getElementById('delete-for-everyone');
+            const messageTime = new Date(messageBubble.dataset.messageTime);
+            const now = new Date();
+            const hoursDiff = (now - messageTime) / (1000 * 60 * 60);
+            
+            if (isSent && hoursDiff <= 1) {
+                deleteEveryoneOption.style.display = 'block';
+            } else {
+                deleteEveryoneOption.style.display = 'none';
+            }
+            
+            messageMenu.style.display = 'block';
+            messageMenu.style.left = e.pageX + 'px';
+            messageMenu.style.top = e.pageY + 'px';
+        }
+    });
+    // Hide context menu when clicking elsewhere
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.message-menu')) {
+            messageMenu.style.display = 'none';
+        }
+        
+        if (!e.target.closest('.dropdown')) {
+            const dropdowns = document.querySelectorAll('.dropdown');
+            dropdowns.forEach(dropdown => {
+                dropdown.classList.remove('show');
+            });
+        }
+    });
+    // Delete message handlers
+    document.getElementById('delete-for-me').addEventListener('click', function() {
+        if (currentMessageId) {
+            deleteMessage(currentMessageId, 'for_me');
+        }
+        messageMenu.style.display = 'none';
+    });
+    document.getElementById('delete-for-everyone').addEventListener('click', function() {
+        if (currentMessageId) {
+            deleteMessage(currentMessageId, 'for_everyone');
+        }
+        messageMenu.style.display = 'none';
+    });
+    // Start status polling
+    userStatusPollingInterval = setInterval(updateUserStatus, 30000);
+    friendStatusPollingInterval = setInterval(fetchFriendStatuses, 5000);
+    // Initial status update
+    updateUserStatus();
+    fetchFriendStatuses();
+    // Handle popstate (back/forward navigation)
+    window.addEventListener('popstate', function(event) {
+        const path = window.location.pathname;
+        if (path === '/chat/') {
+            handleBackButton();
+        } else if (path.startsWith('/chat/')) {
+            const friendId = parseInt(path.split('/')[2]);
+            if (friendId && !isNaN(friendId)) {
+                const friendItem = document.querySelector(`.friend-item[data-friend-id="${friendId}"]`);
                 if (friendItem) {
-                    e.preventDefault();
-                    const friendId = parseInt(friendItem.dataset.friendId);
                     const friendUsername = friendItem.dataset.friendUsername;
                     const profilePhoto = friendItem.querySelector('[data-friend-profile-photo]').dataset.friendProfilePhoto;
                     const isOnline = friendItem.dataset.friendIsOnline === 'true';
                     const lastSeen = friendItem.dataset.friendLastSeen;
-                    
-                    // Update URL without reloading
-                    window.history.pushState({ friendId }, '', `/chat/${friendId}/`);
-                    
                     handleFriendSelection(friendId, friendUsername, profilePhoto, isOnline, lastSeen, friendItem);
                 }
-            });
-            
-            // Start status polling
-            userStatusPollingInterval = setInterval(updateUserStatus, 30000);
-            friendStatusPollingInterval = setInterval(fetchFriendStatuses, 5000);
-            
-            // Initial status update
-            updateUserStatus();
-            fetchFriendStatuses();
-            
-            // Handle popstate (back/forward navigation)
-            window.addEventListener('popstate', function(event) {
-                const path = window.location.pathname;
-                if (path === '/chat/') {
-                    handleBackButton();
-                } else if (path.startsWith('/chat/')) {
-                    const friendId = parseInt(path.split('/')[2]);
-                    if (friendId && !isNaN(friendId)) {
-                        const friendItem = document.querySelector(`.friend-item[data-friend-id="${friendId}"]`);
-                        if (friendItem) {
-                            const friendUsername = friendItem.dataset.friendUsername;
-                            const profilePhoto = friendItem.querySelector('[data-friend-profile-photo]').dataset.friendProfilePhoto;
-                            const isOnline = friendItem.dataset.friendIsOnline === 'true';
-                            const lastSeen = friendItem.dataset.friendLastSeen;
-                            
-                            handleFriendSelection(friendId, friendUsername, profilePhoto, isOnline, lastSeen, friendItem);
-                        }
-                    }
-                }
-            });
-
-            // Functions
-            function initChat() {
-                if (initialFriendId) {
-                    const friendItem = document.querySelector(`.friend-item[data-friend-id="${initialFriendId}"]`);
-                    if (friendItem) {
-                        const friendUsername = friendItem.dataset.friendUsername;
-                        const profilePhoto = friendItem.querySelector('[data-friend-profile-photo]').dataset.friendProfilePhoto;
-                        const isOnline = friendItem.dataset.friendIsOnline === 'true';
-                        const lastSeen = friendItem.dataset.friendLastSeen;
-                        
-                        handleFriendSelection(initialFriendId, friendUsername, profilePhoto, isOnline, lastSeen, friendItem);
-                    }
-                }
-                
-                if (window.innerWidth <= 768) {
-                    if (initialFriendId) {
-                        friendsList.classList.add('hidden');
-                        chatArea.classList.add('active');
-                    } else {
-                        friendsList.classList.remove('hidden');
-                        chatArea.classList.remove('active');
-                    }
-                }
             }
-            
-            function handleFriendSelection(friendId, friendUsername, profilePhoto, isOnline, lastSeen, friendElement) {
-                currentFriendId = friendId;
-                
-                // Update active state for friend items
-                document.querySelectorAll('.friend-item').forEach(item => {
-                    item.classList.remove('active');
-                });
-                friendElement.classList.add('active');
-                
-                // Mobile view handling
-                if (window.innerWidth <= 768) {
-                    friendsList.classList.add('hidden');
-                    chatArea.classList.add('active');
-                }
-                
-                // Hide no chat selected message
-                if (noChatSelected) {
-                    noChatSelected.style.display = 'none';
-                }
-                
-                // Create chat interface
-                createChatInterface(friendUsername, profilePhoto, isOnline, lastSeen);
-                
-                // Load messages
-                loadMessages(friendId);
-                
-                // Clear unread count for this friend
-                clearUnreadCount(friendId);
+        }
+    });
+    // Functions
+    function initChat() {
+        if (initialFriendId) {
+            const friendItem = document.querySelector(`.friend-item[data-friend-id="${initialFriendId}"]`);
+            if (friendItem) {
+                const friendUsername = friendItem.dataset.friendUsername;
+                const profilePhoto = friendItem.querySelector('[data-friend-profile-photo]').dataset.friendProfilePhoto;
+                const isOnline = friendItem.dataset.friendIsOnline === 'true';
+                const lastSeen = friendItem.dataset.friendLastSeen;
+                handleFriendSelection(initialFriendId, friendUsername, profilePhoto, isOnline, lastSeen, friendItem);
             }
-            
-            function createChatInterface(username, profilePhoto, isOnline, lastSeen) {
-                const profilePhotoHtml = profilePhoto ? 
-                    `<img src="${profilePhoto}" alt="${username}'s profile photo">` :
-                    `<div class="avatar-circle"><span>${username.slice(0, 1).toUpperCase()}</span></div>`;
-                
-                const statusHtml = isOnline ?
-                    '<span class="online">Online</span>' :
-                    `Last seen ${lastSeen ? new Date(lastSeen).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A'}`;
-                
-                chatArea.innerHTML = `
-                    <div class="chat-header" id="chat-header">
-                        <span class="mobile-back-button" id="mobile-back-button">←</span>
-                        ${profilePhotoHtml}
-                        <div class="chat-header-info">
-                            <h3 id="chat-friend-name">${username}</h3>
-                            {% comment %} <div class="chat-header-status">${statusHtml}</div> {% endcomment %}
+        }
+        if (window.innerWidth <= 768) {
+            if (initialFriendId) {
+                friendsList.classList.add('hidden');
+                chatArea.classList.add('active');
+            } else {
+                friendsList.classList.remove('hidden');
+                chatArea.classList.remove('active');
+            }
+        }
+    }
+    function handleFriendSelection(friendId, friendUsername, profilePhoto, isOnline, lastSeen, friendElement) {
+        currentFriendId = friendId;
+        // Reset selection mode when switching friends
+        exitSelectionMode();
+        
+        // Update active state for friend items
+        document.querySelectorAll('.friend-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        friendElement.classList.add('active');
+        // Mobile view handling
+        if (window.innerWidth <= 768) {
+            friendsList.classList.add('hidden');
+            chatArea.classList.add('active');
+        }
+        // Hide no chat selected message
+        if (noChatSelected) {
+            noChatSelected.style.display = 'none';
+        }
+        // Create chat interface
+        createChatInterface(friendUsername, profilePhoto, isOnline, lastSeen, friendId);
+        // Load messages
+        loadMessages(friendId);
+        // Clear unread count for this friend
+        clearUnreadCount(friendId);
+    }
+    function createChatInterface(username, profilePhoto, isOnline, lastSeen, friendId) {
+        const profilePhotoHtml = profilePhoto ? 
+            `<img src="${profilePhoto}" alt="${username}'s profile photo">` : 
+            `<div class="avatar-circle"><span>${username.slice(0, 1).toUpperCase()}</span></div>`;
+        const statusHtml = isOnline ? 
+            '<span class="online">Online</span>' : 
+            `Last seen ${lastSeen ? new Date(lastSeen).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A'}`;
+        chatArea.innerHTML = `
+            <div class="chat-header" id="chat-header">
+                <div class="chat-header-left">
+                    <span class="mobile-back-button" id="mobile-back-button">←</span>
+                    ${profilePhotoHtml}
+                    <div class="chat-header-info">
+                        <h3 id="chat-friend-name">${username}</h3>
+                        {% comment %} <div class="chat-header-status" id="chat-header-status">${statusHtml}</div> {% endcomment %}
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <div class="dropdown">
+                        <button class="header-btn" id="chat-menu-btn">⋮</button>
+                        <div class="dropdown-content" id="chat-menu">
+                            <a href="/chat/media/${friendId}/">Media</a>
+                            <a href="/chat/documents/${friendId}/">Documents</a>
+                            <a href="/chat/links/${friendId}/">Links</a>
                         </div>
                     </div>
-                    <div class="messages-display" id="messages-display">
-                        <div class="loading-indicator">Loading messages...</div>
+                    <button class="header-btn" id="select-messages-btn">✓</button>
+                </div>
+            </div>
+            <div class="messages-display" id="messages-display">
+                <div class="loading-indicator">Loading messages...</div>
+            </div>
+            <div class="selection-toolbar" id="selection-toolbar">
+                <div class="selection-count" id="selection-count">0 selected</div>
+                <div class="selection-actions">
+                    <button class="selection-toolbar-btn cancel" id="cancel-selection-btn">Cancel</button>
+                    <button class="selection-toolbar-btn" id="delete-selected-for-me-btn">Delete for me</button>
+                </div>
+            </div>
+            <div class="message-input-area">
+                <div class="input-container">
+                    <div class="voice-recording-indicator" id="voice-recording-indicator">
+                        <span>🎤 Recording...</span>
+                        <span class="recording-timer" id="recording-timer">0:00</span>
+                        <button class="cancel-recording-btn" id="cancel-recording-btn">Cancel</button>
                     </div>
-                    <div class="message-input-area">
+                    <div class="file-preview-container" id="file-preview-container">
+                        <div class="file-preview-item" id="file-preview-item">
+                            <div class="file-preview-info">
+                                <div class="file-preview-name" id="file-preview-name"></div>
+                                <div class="file-preview-size" id="file-preview-size"></div>
+                            </div>
+                            <button class="remove-file-btn" id="remove-file-btn">×</button>
+                        </div>
+                    </div>
+                    <div class="text-input-row">
                         <input type="text" id="message-input" placeholder="Type a message...">
-                        <button id="send-button">Send</button>
+                        <div class="file-input-container">
+                            <button class="file-input-btn" id="file-input-btn">📎</button>
+                            <input type="file" id="file-input" accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt,.zip,.rar">
+                        </div>
+                        <button class="voice-record-btn" id="voice-record-btn">🎤</button>
                     </div>
-                `;
-                
-                // Attach event listeners
-                const mobileBackButton = document.getElementById('mobile-back-button');
-                const sendButton = document.getElementById('send-button');
-                const messageInput = document.getElementById('message-input');
-                
-                if (mobileBackButton) {
-                    mobileBackButton.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        handleBackButton();
-                    });
+                </div>
+                <button class="send-btn" id="send-button">➤</button>
+            </div>
+        `;
+        // Attach event listeners
+        attachEventListeners();
+    }
+    function attachEventListeners() {
+        const mobileBackButton = document.getElementById('mobile-back-button');
+        const sendButton = document.getElementById('send-button');
+        const messageInput = document.getElementById('message-input');
+        const fileInput = document.getElementById('file-input');
+        const fileInputBtn = document.getElementById('file-input-btn');
+        const removeFileBtn = document.getElementById('remove-file-btn');
+        const chatMenuBtn = document.getElementById('chat-menu-btn');
+        const voiceRecordBtn = document.getElementById('voice-record-btn');
+        const cancelRecordingBtn = document.getElementById('cancel-recording-btn');
+        const selectMessagesBtn = document.getElementById('select-messages-btn');
+        const cancelSelectionBtn = document.getElementById('cancel-selection-btn');
+        const deleteSelectedForMeBtn = document.getElementById('delete-selected-for-me-btn');
+        
+        if (mobileBackButton) {
+            mobileBackButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                handleBackButton();
+            });
+        }
+        if (sendButton) {
+            sendButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (selectedFile) {
+                    sendFile();
+                } else {
+                    sendMessage();
                 }
-                
-                if (sendButton) {
-                    sendButton.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        sendMessage();
-                    });
-                }
-                
-                if (messageInput) {
-                    messageInput.addEventListener('keypress', function(e) {
-                        if (e.key === 'Enter') {
-                            e.preventDefault();
-                            sendMessage();
-                        }
-                    });
-                }
-            }
-            
-            async function loadMessages(friendId) {
-                const messagesDisplay = document.getElementById('messages-display');
-                if (!messagesDisplay) return;
-                
-                try {
-                    const response = await fetch(`/chat/api/messages/${friendId}/`);
-                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                    const messages = await response.json();
-                    
-                    messagesDisplay.innerHTML = '';
-                    
-                    if (messages.length === 0) {
-                        messagesDisplay.innerHTML = '<div class="loading-indicator">No messages yet. Start the conversation!</div>';
+            });
+        }
+        if (messageInput) {
+            messageInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (selectedFile) {
+                        sendFile();
                     } else {
-                        messages.forEach(msg => {
-                            const isSelf = msg.sender__id === userId;
-                            addMessageToDisplay(msg.content, msg.sender__id, msg.timestamp, isSelf, msg.status);
-                        });
-                        scrollToBottom();
+                        sendMessage();
                     }
-                    
-                    // Clear previous polling and start new one
-                    if (messagePollingInterval) {
-                        clearInterval(messagePollingInterval);
-                    }
-                    messagePollingInterval = setInterval(() => pollMessages(friendId), 3000);
-                    
-                } catch (error) {
-                    console.error('Error loading messages:', error);
-                    messagesDisplay.innerHTML = '<div class="loading-indicator" style="color: #ff0000;">Failed to load messages. Please try again.</div>';
                 }
+            });
+        }
+        if (fileInputBtn) {
+            fileInputBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                fileInput.click();
+            });
+        }
+        if (fileInput) {
+            fileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    handleFileSelection(file);
+                }
+            });
+        }
+        if (removeFileBtn) {
+            removeFileBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                clearFileSelection();
+            });
+        }
+        if (chatMenuBtn) {
+            chatMenuBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                const dropdown = this.closest('.dropdown');
+                dropdown.classList.toggle('show');
+            });
+        }
+        // Voice recording event listeners
+        if (voiceRecordBtn) {
+            voiceRecordBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (isRecording) {
+                    stopRecording();
+                } else {
+                    startRecording();
+                }
+            });
+        }
+        if (cancelRecordingBtn) {
+            cancelRecordingBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                cancelRecording();
+            });
+        }
+        
+        // Selection mode event listeners
+        if (selectMessagesBtn) {
+            selectMessagesBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                toggleSelectionMode();
+            });
+        }
+        if (cancelSelectionBtn) {
+            cancelSelectionBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                exitSelectionMode();
+            });
+        }
+        if (deleteSelectedForMeBtn) {
+            deleteSelectedForMeBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                deleteSelectedMessages('for_me');
+            });
+        }
+        
+        // Event delegation for message selection
+        const messagesDisplay = document.getElementById('messages-display');
+        if (messagesDisplay) {
+            messagesDisplay.addEventListener('click', function(e) {
+                if (selectionMode) {
+                    const messageBubble = e.target.closest('.message-bubble');
+                    if (messageBubble && messageBubble.dataset.messageId) {
+                        toggleMessageSelection(parseInt(messageBubble.dataset.messageId));
+                    }
+                }
+            });
+        }
+    }
+    
+    // Selection mode functions
+    function toggleSelectionMode() {
+        selectionMode = !selectionMode;
+        const messagesDisplay = document.getElementById('messages-display');
+        const selectionToolbar = document.getElementById('selection-toolbar');
+        const selectMessagesBtn = document.getElementById('select-messages-btn');
+        
+        if (selectionMode) {
+            messagesDisplay.classList.add('selection-mode');
+            selectionToolbar.classList.add('active');
+            selectMessagesBtn.style.backgroundColor = '#007bff';
+            selectMessagesBtn.style.color = 'white';
+            updateSelectionCount();
+        } else {
+            exitSelectionMode();
+        }
+    }
+    
+    function exitSelectionMode() {
+        selectionMode = false;
+        selectedMessages.clear();
+        
+        const messagesDisplay = document.getElementById('messages-display');
+        const selectionToolbar = document.getElementById('selection-toolbar');
+        const selectMessagesBtn = document.getElementById('select-messages-btn');
+        
+        if (messagesDisplay) {
+            messagesDisplay.classList.remove('selection-mode');
+            // Remove selection from all messages
+            const messageBubbles = messagesDisplay.querySelectorAll('.message-bubble');
+            messageBubbles.forEach(bubble => {
+                bubble.classList.remove('selected');
+            });
+        }
+        
+        if (selectionToolbar) {
+            selectionToolbar.classList.remove('active');
+        }
+        
+        if (selectMessagesBtn) {
+            selectMessagesBtn.style.backgroundColor = '';
+            selectMessagesBtn.style.color = '';
+        }
+    }
+    
+    function toggleMessageSelection(messageId) {
+        const messageBubble = document.querySelector(`.message-bubble[data-message-id="${messageId}"]`);
+        if (!messageBubble) return;
+        
+        if (selectedMessages.has(messageId)) {
+            selectedMessages.delete(messageId);
+            messageBubble.classList.remove('selected');
+        } else {
+            selectedMessages.add(messageId);
+            messageBubble.classList.add('selected');
+        }
+        
+        updateSelectionCount();
+    }
+    
+    function updateSelectionCount() {
+        const selectionCount = document.getElementById('selection-count');
+        if (selectionCount) {
+            selectionCount.textContent = `${selectedMessages.size} selected`;
+        }
+    }
+    
+    async function deleteSelectedMessages(deleteType) {
+        if (selectedMessages.size === 0) return;
+        
+        try {
+            // Delete messages one by one
+            for (const messageId of selectedMessages) {
+                await deleteMessage(messageId, deleteType);
             }
             
-            async function pollMessages(friendId) {
-                try {
-                    const messagesDisplay = document.getElementById('messages-display');
-                    if (!messagesDisplay) return;
-                    
-                    const response = await fetch(`/chat/api/messages/${friendId}/`);
-                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                    const messages = await response.json();
-                    
-                    const currentMessageCount = messagesDisplay.querySelectorAll('.message-bubble').length;
-                    if (messages.length > currentMessageCount) {
-                        messagesDisplay.innerHTML = '';
-                        messages.forEach(msg => {
-                            const isSelf = msg.sender__id === userId;
-                            addMessageToDisplay(msg.content, msg.sender__id, msg.timestamp, isSelf, msg.status);
-                        });
-                        scrollToBottom();
-                    }
-                } catch (error) {
-                    console.error('Error polling messages:', error);
-                }
-            }
+            // Exit selection mode after deletion
+            exitSelectionMode();
+        } catch (error) {
+            console.error('Error deleting selected messages:', error);
+            alert('Failed to delete some messages. Please try again.');
+        }
+    }
+    
+    // Voice recording functions
+    async function startRecording() {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorder = new MediaRecorder(stream);
+            audioChunks = [];
+            recordingCanceled = false;
             
-            function handleBackButton() {
-                if (window.innerWidth <= 768) {
-                    friendsList.classList.remove('hidden');
-                    chatArea.classList.remove('active');
+            mediaRecorder.ondataavailable = function(event) {
+                audioChunks.push(event.data);
+            };
+            
+            mediaRecorder.onstop = function() {
+                if (!recordingCanceled) {
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                    sendVoiceMessage(audioBlob);
                 }
-                
-                // Update URL
-                window.history.pushState({}, '', '/chat/');
-                
-                // Clear message polling
-                if (messagePollingInterval) {
-                    clearInterval(messagePollingInterval);
-                    messagePollingInterval = null;
-                }
-                
-                // Reset active friend
-                document.querySelectorAll('.friend-item').forEach(item => {
-                    item.classList.remove('active');
+                stream.getTracks().forEach(track => track.stop());
+            };
+            
+            mediaRecorder.start();
+            isRecording = true;
+            recordingStartTime = Date.now();
+            
+            // Update UI
+            const voiceRecordBtn = document.getElementById('voice-record-btn');
+            const voiceRecordingIndicator = document.getElementById('voice-recording-indicator');
+            
+            voiceRecordBtn.classList.add('recording');
+            voiceRecordBtn.innerHTML = '⏹️';
+            voiceRecordingIndicator.classList.add('active');
+            
+            // Start timer
+            recordingTimer = setInterval(updateRecordingTimer, 1000);
+            
+        } catch (error) {
+            console.error('Error starting recording:', error);
+            alert('Could not access microphone. Please check permissions.');
+        }
+    }
+    function stopRecording() {
+        if (mediaRecorder && isRecording) {
+            mediaRecorder.stop();
+            isRecording = false;
+            clearInterval(recordingTimer);
+            
+            // Update UI
+            const voiceRecordBtn = document.getElementById('voice-record-btn');
+            const voiceRecordingIndicator = document.getElementById('voice-recording-indicator');
+            
+            voiceRecordBtn.classList.remove('recording');
+            voiceRecordBtn.innerHTML = '🎤';
+            voiceRecordingIndicator.classList.remove('active');
+        }
+    }
+    function cancelRecording() {
+        if (mediaRecorder && isRecording) {
+            // Added flag to prevent sending when stopping
+            recordingCanceled = true;
+            mediaRecorder.stop();
+            isRecording = false;
+            clearInterval(recordingTimer);
+            audioChunks = [];
+            
+            // Update UI
+            const voiceRecordBtn = document.getElementById('voice-record-btn');
+            const voiceRecordingIndicator = document.getElementById('voice-recording-indicator');
+            
+            voiceRecordBtn.classList.remove('recording');
+            voiceRecordBtn.innerHTML = '🎤';
+            voiceRecordingIndicator.classList.remove('active');
+            
+            // Stop media stream
+            if (mediaRecorder.stream) {
+                mediaRecorder.stream.getTracks().forEach(track => track.stop());
+            }
+        }
+    }
+    function updateRecordingTimer() {
+        if (recordingStartTime) {
+            const elapsed = Math.floor((Date.now() - recordingStartTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            const timerElement = document.getElementById('recording-timer');
+            if (timerElement) {
+                timerElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            }
+        }
+    }
+    async function sendVoiceMessage(audioBlob) {
+        if (!currentFriendId) return;
+        try {
+            const reader = new FileReader();
+            reader.onloadend = async function() {
+                const base64Audio = reader.result;
+                const duration = recordingStartTime ? Math.floor((Date.now() - recordingStartTime) / 1000) : 0;
+                const response = await fetch('/chat/api/messages/send-voice/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken'),
+                    },
+                    body: JSON.stringify({
+                        'receiver_id': currentFriendId,
+                        'audio_data': base64Audio,
+                        'duration': duration
+                    })
                 });
-                
-                // Show no chat selected message
-                chatArea.innerHTML = '<div class="no-chat-selected" id="no-chat-selected"><p>Select a friend from the list to start chatting.</p></div>';
-                
-                currentFriendId = null;
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.error}`);
+                }
+                const sentVoiceData = await response.json();
+                addMessageToDisplay(sentVoiceData, true);
+                scrollToBottom();
+            };
+            reader.readAsDataURL(audioBlob);
+        } catch (error) {
+            console.error('Error sending voice message:', error);
+            alert('Failed to send voice message. Please try again.');
+        }
+    }
+    // Delete message function
+    async function deleteMessage(messageId, deleteType) {
+        try {
+            const response = await fetch(`/chat/api/messages/delete/${messageId}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken'),
+                },
+                body: JSON.stringify({
+                    'delete_type': deleteType
+                })
+            });
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.error}`);
+            }
+            // Reload messages to reflect the deletion
+            if (currentFriendId) {
+                loadMessages(currentFriendId);
+            }
+        } catch (error) {
+            console.error('Error deleting message:', error);
+            alert('Failed to delete message. Please try again.');
+        }
+    }
+    function handleFileSelection(file) {
+        selectedFile = file;
+        const previewContainer = document.getElementById('file-preview-container');
+        const previewName = document.getElementById('file-preview-name');
+        const previewSize = document.getElementById('file-preview-size');
+        previewName.textContent = file.name;
+        previewSize.textContent = formatFileSize(file.size);
+        previewContainer.style.display = 'block';
+        // Update send button text
+        const sendButton = document.getElementById('send-button');
+        sendButton.textContent = '➤';
+    }
+    function clearFileSelection() {
+        selectedFile = null;
+        const previewContainer = document.getElementById('file-preview-container');
+        const fileInput = document.getElementById('file-input');
+        previewContainer.style.display = 'none';
+        fileInput.value = '';
+        // Reset send button text
+        const sendButton = document.getElementById('send-button');
+        sendButton.textContent = '➤';
+    }
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 B';
+        const k = 1024;
+        const sizes = ['B', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+    }
+    async function sendFile() {
+        if (!selectedFile || !currentFriendId) return;
+        const messageInput = document.getElementById('message-input');
+        const caption = messageInput.value.trim();
+        const formData = new FormData();
+        formData.append('receiver_id', currentFriendId);
+        formData.append('file', selectedFile);
+        if (caption) {
+            formData.append('caption', caption);
+        }
+        try {
+            const response = await fetch('/chat/api/messages/send-file/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                },
+                body: formData
+            });
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.error}`);
+            }
+            const sentFileData = await response.json();
+            addMessageToDisplay(sentFileData, true);
+            messageInput.value = '';
+            clearFileSelection();
+            scrollToBottom();
+        } catch (error) {
+            console.error('Error sending file:', error);
+            alert('Failed to send file. Please try again.');
+        }
+    }
+    async function loadMessages(friendId) {
+        const messagesDisplay = document.getElementById('messages-display');
+        if (!messagesDisplay) return;
+        try {
+            const response = await fetch(`/chat/api/messages/${friendId}/`);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            const messages = await response.json();
+            messagesDisplay.innerHTML = '';
+            if (messages.length === 0) {
+                messagesDisplay.innerHTML = '<div class="loading-indicator">No messages yet. Start the conversation!</div>';
+            } else {
+                messages.forEach(msg => {
+                    const isSelf = msg.sender__id === userId;
+                    addMessageToDisplay(msg, isSelf);
+                });
+                scrollToBottom();
+            }
+            // Clear previous polling and start new one
+            if (messagePollingInterval) {
+                clearInterval(messagePollingInterval);
+            }
+            messagePollingInterval = setInterval(() => pollMessages(friendId), 3000);
+        } catch (error) {
+            console.error('Error loading messages:', error);
+            messagesDisplay.innerHTML = '<div class="loading-indicator" style="color: #ff0000;">Failed to load messages. Please try again.</div>';
+        }
+    }
+    async function pollMessages(friendId) {
+        try {
+            const messagesDisplay = document.getElementById('messages-display');
+            if (!messagesDisplay) return;
+            const response = await fetch(`/chat/api/messages/${friendId}/`);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            const messages = await response.json();
+            const currentMessageCount = messagesDisplay.querySelectorAll('.message-bubble').length;
+            if (messages.length > currentMessageCount) {
+                messagesDisplay.innerHTML = '';
+                messages.forEach(msg => {
+                    const isSelf = msg.sender__id === userId;
+                    addMessageToDisplay(msg, isSelf);
+                });
+                scrollToBottom();
+            }
+        } catch (error) {
+            console.error('Error polling messages:', error);
+        }
+    }
+    function handleBackButton() {
+        if (window.innerWidth <= 768) {
+            friendsList.classList.remove('hidden');
+            chatArea.classList.remove('active');
+        }
+        // Update URL
+        window.history.pushState({}, '', '/chat/');
+        // Clear message polling
+        if (messagePollingInterval) {
+            clearInterval(messagePollingInterval);
+            messagePollingInterval = null;
+        }
+        // Reset active friend
+        document.querySelectorAll('.friend-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        // Show no chat selected message
+        chatArea.innerHTML = '<div class="no-chat-selected" id="no-chat-selected"><p>Select a friend from the list to start chatting.</p></div>';
+        currentFriendId = null;
+    }
+    function addMessageToDisplay(messageData, isSelf) {
+        const messagesDisplay = document.getElementById('messages-display');
+        if (!messagesDisplay) return;
+        const messageBubble = document.createElement('div');
+        messageBubble.classList.add('message-bubble');
+        messageBubble.classList.add(isSelf ? 'sent' : 'received');
+        messageBubble.dataset.messageId = messageData.id;
+        messageBubble.dataset.messageTime = messageData.timestamp;
+        
+        // Add selection checkbox
+        const checkbox = document.createElement('div');
+        checkbox.classList.add('message-checkbox');
+        checkbox.innerHTML = '<input type="checkbox">';
+        messageBubble.appendChild(checkbox);
+        
+        // Check if message is deleted for everyone
+        if (messageData.deleted_for_everyone) {
+            messageBubble.classList.add('deleted');
+            messageBubble.innerHTML += `
+                <em>This message was deleted</em>
+                <div class="message-timestamp">
+                    ${new Date(messageData.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </div>
+            `;
+            messagesDisplay.appendChild(messageBubble);
+            return;
+        }
+        
+        let messageContent = '';
+        // Handle different message types
+        if (messageData.message_type === 'text') {
+            messageContent = messageData.content || '';
+        } else {
+            // File message
+            messageBubble.classList.add('file-message');
+            
+            // Store file information for selection mode
+            messageBubble.dataset.isImage = messageData.is_image ? 'true' : 'false';
+            if (messageData.file_url) {
+                messageBubble.dataset.fileUrl = messageData.file_url;
             }
             
-            function addMessageToDisplay(messageContent, senderId, timestamp, isSelf, status) {
-                const messagesDisplay = document.getElementById('messages-display');
-                if (!messagesDisplay) return;
-                
-                const messageBubble = document.createElement('div');
-                messageBubble.classList.add('message-bubble');
-                messageBubble.classList.add(isSelf ? 'sent' : 'received');
-                
-                let statusHtml = '';
-                if (isSelf) {
-                    let tickClass = '';
-                    let tickContent = '✓';
-                    if (status === 'delivered') {
-                        tickClass = 'delivered';
-                        tickContent = '✓✓';
-                    } else if (status === 'read') {
-                        tickClass = 'read';
-                        tickContent = '✓✓';
-                    }
-                    statusHtml = `<span class="message-status"><span class="tick ${tickClass}">${tickContent}</span></span>`;
-                }
-                
-                messageBubble.innerHTML = `
-                    ${messageContent}
-                    <div class="message-timestamp">
-                        ${new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                        ${statusHtml}
+        if (messageData.is_image) {
+    messageContent = `
+        <div class="file-preview">
+            <img src="${messageData.file_url}" alt="${messageData.file_name}" onclick="window.open('${messageData.file_url}', '_blank')">
+            <button class="download-icon" onclick="downloadFile(${messageData.id})" title="Download">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="black" viewBox="0 0 16 16">
+                    <path d="M.5 9.9V14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V9.9a.5.5 0 0 0-1 0V14a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1V9.9a.5.5 0 0 0-1 0z"/>
+                    <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+                </svg>
+            </button>
+        </div>
+    `;
+} else if (messageData.is_video) {
+                messageContent = `
+                    <div class="file-preview">
+                        <video controls>
+                            <source src="${messageData.file_url}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
                     </div>
                 `;
-                messagesDisplay.appendChild(messageBubble);
-            }
-            
-            function scrollToBottom() {
-                const messagesDisplay = document.getElementById('messages-display');
-                if (messagesDisplay) {
-                    messagesDisplay.scrollTop = messagesDisplay.scrollHeight;
+            } else if (messageData.is_voice) {
+                messageContent = `
+                    <div class="voice-message">
+                        <button class="voice-play-btn" onclick="playVoiceMessage('${messageData.file_url}', this)">▶️</button>
+                        <div class="voice-waveform"></div>
+                        <span class="voice-duration">${messageData.content}</span>
+                    </div>
+                `;
+            } else {
+                // Document, audio, or other file types
+                let iconClass = 'document';
+                let iconSymbol = '📄';
+                if (messageData.is_audio) {
+                    iconClass = 'audio';
+                    iconSymbol = '🎵';
+                } else if (messageData.is_video) {
+                    iconClass = 'video';
+                    iconSymbol = '🎬';
                 }
+                messageContent = `
+                    <div class="file-info">
+                        <div class="file-icon ${iconClass}">${iconSymbol}</div>
+                        <div class="file-details">
+                            <div class="file-name">${messageData.file_name}</div>
+                            <div class="file-size">${messageData.file_size_display}</div>
+                        </div>
+                    </div>
+                `;
             }
-            
-            async function sendMessage() {
-                const messageInput = document.getElementById('message-input');
-                if (!messageInput) return;
-                
-                const message = messageInput.value.trim();
-                if (!message || !currentFriendId) return;
-                
-                try {
-                    const response = await fetch('/chat/api/messages/send/', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRFToken': getCookie('csrftoken'),
-                        },
-                        body: JSON.stringify({
-                            'receiver_id': currentFriendId,
-                            'content': message
-                        })
-                    });
-                    
-                    if (!response.ok) {
-                        const errorData = await response.json();
-                        throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.error}`);
+            // Add caption if present
+            if (messageData.content && messageData.content.trim() && !messageData.is_voice) {
+                messageContent += `<div class="file-caption">${messageData.content}</div>`;
+            }
+        }
+        let statusHtml = '';
+        if (isSelf) {
+            let tickClass = '';
+            let tickContent = '✓';
+            if (messageData.status === 'delivered') {
+                tickClass = 'delivered';
+                tickContent = '✓✓';
+            } else if (messageData.status === 'read') {
+                tickClass = 'read';
+                tickContent = '✓✓';
+            }
+            statusHtml = `<span class="message-status"><span class="tick ${tickClass}">${tickContent}</span></span>`;
+        }
+        messageBubble.innerHTML += `
+            ${messageContent}
+            <div class="message-timestamp">
+                ${new Date(messageData.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                ${statusHtml}
+            </div>
+        `;
+        messagesDisplay.appendChild(messageBubble);
+    }
+    function scrollToBottom() {
+        const messagesDisplay = document.getElementById('messages-display');
+        if (messagesDisplay) {
+            messagesDisplay.scrollTop = messagesDisplay.scrollHeight;
+        }
+    }
+    async function sendMessage() {
+        const messageInput = document.getElementById('message-input');
+        if (!messageInput) return;
+        const message = messageInput.value.trim();
+        if (!message || !currentFriendId) return;
+        try {
+            const response = await fetch('/chat/api/messages/send/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken'),
+                },
+                body: JSON.stringify({
+                    'receiver_id': currentFriendId,
+                    'content': message
+                })
+            });
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.error}`);
+            }
+            const sentMessageData = await response.json();
+            addMessageToDisplay(sentMessageData, true);
+            messageInput.value = '';
+            scrollToBottom();
+        } catch (error) {
+            console.error('Error sending message:', error);
+            alert('Failed to send message. Please try again.');
+        }
+    }
+    function clearUnreadCount(friendId) {
+        const unreadBadge = document.getElementById(`unread-count-${friendId}`);
+        if (unreadBadge) {
+            unreadBadge.remove();
+        }
+    }
+    async function updateUserStatus() {
+        try {
+            await fetch('/chat/api/status/update/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                },
+            });
+        } catch (error) {
+            console.error('Error updating user status:', error);
+        }
+    }
+    async function fetchFriendStatuses() {
+        try {
+            const response = await fetch('/chat/api/friends/status/');
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            const friendStatuses = await response.json();
+            friendStatuses.forEach(friendStatus => {
+                const friendItem = document.querySelector(`.friend-item[data-friend-id="${friendStatus.id}"]`);
+                if (friendItem) {
+                    // Update status
+                    const statusDiv = friendItem.querySelector('.friend-item-status');
+                    if (statusDiv) {
+                        statusDiv.innerHTML = friendStatus.is_online ? 
+                            '<span class="online">Online</span>' : 
+                            `Last seen ${friendStatus.last_seen ? new Date(friendStatus.last_seen).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A'}`;
                     }
+                    // Update unread count
+                    let unreadBadge = friendItem.querySelector('.unread-count-badge');
+                    const nameAndCountDiv = friendItem.querySelector('.name-and-count');
                     
-                    const sentMessageData = await response.json();
-                    addMessageToDisplay(sentMessageData.content, sentMessageData.sender_id, sentMessageData.timestamp, true, sentMessageData.status);
-                    messageInput.value = '';
-                    scrollToBottom();
-                    
-                } catch (error) {
-                    console.error('Error sending message:', error);
-                    alert('Failed to send message. Please try again.');
-                }
-            }
-            
-            function clearUnreadCount(friendId) {
-                const unreadBadge = document.getElementById(`unread-count-${friendId}`);
-                if (unreadBadge) {
-                    unreadBadge.remove();
-                }
-            }
-            
-            async function updateUserStatus() {
-                try {
-                    await fetch('/chat/api/status/update/', {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRFToken': getCookie('csrftoken'),
-                        },
-                    });
-                } catch (error) {
-                    console.error('Error updating user status:', error);
-                }
-            }
-            
-            async function fetchFriendStatuses() {
-                try {
-                    const response = await fetch('/chat/api/friends/status/');
-                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                    const friendStatuses = await response.json();
-                    
-                    friendStatuses.forEach(friendStatus => {
-                        const friendItem = document.querySelector(`.friend-item[data-friend-id="${friendStatus.id}"]`);
-                        if (friendItem) {
-                            // Update status
-                            const statusDiv = friendItem.querySelector('.friend-item-status');
-                            if (statusDiv) {
-                                statusDiv.innerHTML = friendStatus.is_online ? 
-                                    '<span class="online">Online</span>' : 
-                                    `Last seen ${friendStatus.last_seen ? new Date(friendStatus.last_seen).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A'}`;
-                            }
-                            
-                            // Update unread count
-                            let unreadBadge = friendItem.querySelector('.unread-count-badge');
-                            const nameAndCountDiv = friendItem.querySelector('.name-and-count');
-                            if (friendStatus.unread_count > 0) {
-                                if (!unreadBadge) {
-                                    unreadBadge = document.createElement('span');
-                                    unreadBadge.classList.add('unread-count-badge');
-                                    unreadBadge.id = `unread-count-${friendStatus.id}`;
-                                    if (nameAndCountDiv) {
-                                        nameAndCountDiv.appendChild(unreadBadge);
-                                    }
-                                }
-                                unreadBadge.textContent = friendStatus.unread_count;
-                            } else if (unreadBadge) {
-                                unreadBadge.remove();
+                    if (friendStatus.unread_count > 0) {
+                        if (!unreadBadge) {
+                            unreadBadge = document.createElement('span');
+                            unreadBadge.classList.add('unread-count-badge');
+                            unreadBadge.id = `unread-count-${friendStatus.id}`;
+                            if (nameAndCountDiv) {
+                                nameAndCountDiv.appendChild(unreadBadge);
                             }
                         }
-                    });
-                } catch (error) {
-                    console.error('Error fetching friend statuses:', error);
-                }
-            }
-            
-            function getCookie(name) {
-                let cookieValue = null;
-                if (document.cookie && document.cookie !== '') {
-                    const cookies = document.cookie.split(';');
-                    for (let i = 0; i < cookies.length; i++) {
-                        const cookie = cookies[i].trim();
-                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                            break;
-                        }
+                        unreadBadge.textContent = friendStatus.unread_count;
+                    } else if (unreadBadge) {
+                        unreadBadge.remove();
                     }
                 }
-                return cookieValue;
+            });
+        } catch (error) {
+            console.error('Error fetching friend statuses:', error);
+        }
+    }
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
             }
-        });
-    </script>
+        }
+        return cookieValue;
+    }
+    // Global functions for onclick handlers
+    window.downloadFile = function(messageId) {
+        window.open(`/chat/download/${messageId}/`, '_blank');
+    };
+    window.playVoiceMessage = function(audioUrl, button) {
+        const audio = new Audio(audioUrl);
+        const originalContent = button.innerHTML;
+        
+        button.innerHTML = '⏸️';
+        button.disabled = true;
+        
+        audio.play();
+        
+        audio.onended = function() {
+            button.innerHTML = originalContent;
+            button.disabled = false;
+        };
+        
+        audio.onerror = function() {
+            button.innerHTML = originalContent;
+            button.disabled = false;
+            alert('Error playing voice message');
+        };
+    };
+});
+</script>
 {% endblock content %}

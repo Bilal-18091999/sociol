@@ -1,0 +1,1206 @@
+{% extends "base.html" %}
+{% block content %}
+    <style>
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1px;
+        }
+        
+        /* ... (all your existing styles remain unchanged) ... */
+        
+        /* NEW: Loading modal styles */
+        .loading-modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .loading-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #1a1a1a;
+        }
+        
+        .loading-details {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 20px;
+        }
+        
+        .loading-success {
+            color: #059669;
+            font-weight: 600;
+        }
+        
+        .loading-error {
+            color: #dc2626;
+            font-weight: 600;
+        }
+        
+        .loading-actions {
+            margin-top: 20px;
+        }
+        
+        .loading-button {
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .loading-button:hover {
+            background-color: #2563eb;
+        }
+        .header-actions {
+    display: flex
+;
+    align-items
+: center;
+   gap: 1px; 
+}
+        .bg-red-500 {
+    --tw-bg-opacity: 1;
+    background-color: rgb(239 68 68 / var(--tw-bg-opacity, 1));
+    border-radius: 10px;
+    color: white;
+    text-decoration: none;
+    padding: 2px;
+    position: absolute;
+    font-size: 12px;
+}
+.bg-red-500 {
+    position: absolute;
+    top: 4px;
+    right: 14px;
+    z-index: 10;
+}
+        /* Dropdown menu styles */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: white;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .dropdown-content a {
+            color: #1a1a1a;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+        
+        .dropdown-content a:hover {
+            background-color: #f3f4f6;
+        }
+        
+        .dropdown.show .dropdown-content {
+            display: block;
+        }
+        
+        /* Add this to prevent the dropdown from being clipped by overflow */
+        .post-header {
+            position: relative;
+            z-index: 1;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8f9fa;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding-bottom: 40px;
+        }
+        .feed-header {
+            margin-bottom: 24px;
+        }
+        .feed-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+        }
+        .feed-subtitle {
+            font-size: 14px;
+            color: #6b7280;
+        }
+        .post-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        .post-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        .post-user-info {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            flex: 1;
+        }
+        .avatar {
+            width: 40px;
+            height: 40px;
+            background-color: #e5e7eb;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #6b7280;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .user-details {
+            flex: 1;
+            min-width: 0;
+        }
+        .username {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 2px;
+            word-break: break-word;
+        }
+        .user-handle {
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 4px;
+            word-break: break-word;
+        }
+        .timestamp {
+            font-size: 12px;
+            color: #6b7280;
+        }
+        .post-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .post-type {
+            font-size: 12px;
+            color: #6b7280;
+            background-color: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            text-transform: capitalize;
+        }
+        .post-type.text { background-color: #dbeafe; color: #1e40af; }
+        .post-type.image { background-color: #dcfce7; color: #166534; }
+        .post-type.video { background-color: #fef3c7; color: #92400e; }
+        .menu-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            color: #6b7280;
+            font-size: 16px;
+        }
+        .post-content {
+            margin-bottom: 16px;
+        }
+        .text-content {
+            font-size: 14px;
+            color: #1a1a1a;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .caption {
+            font-size: 14px;
+            color: #1a1a1a;
+            line-height: 1.5;
+            margin-bottom: 12px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .media-content {
+            border-radius: 8px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+        .post-image {
+            width: 100%;
+            height: auto;
+            max-height: 400px;
+            object-fit: cover;
+            display: block;
+        }
+        .post-video {
+            width: 100%;
+            height: auto;
+            max-height: 400px;
+            display: block;
+        }
+        .post-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding-top: 12px;
+            border-top: 1px solid #f3f4f6;
+        }
+        .action-button {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 6px 8px;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #6b7280;
+            transition: all 0.2s;
+        }
+        .action-button:hover {
+            background-color: #f3f4f6;
+        }
+        .like-button {
+            color: #6b7280;
+        }
+        .like-button.liked {
+            color: #ef4444; /* Red color for liked state */
+        }
+        .like-button:hover {
+            background-color: #fef2f2;
+        }
+        .bookmark-button {
+            margin-left: auto;
+        }
+        /* NEW: Styles for bookmarked state */
+        .bookmark-button.bookmarked .bookmark-icon,
+        .bookmark-button.bookmarked .bookmark-text {
+            color: #3b82f6; /* Blue color for bookmarked state */
+        }
+        .heart-icon {
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+        .heart-icon.liked {
+            color: #ef4444; /* Red color for liked state */
+        }
+        .no-posts {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6b7280;
+        }
+        .no-posts h3 {
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+        .no-posts p {
+            font-size: 14px;
+        }
+        .friend-indicator {
+            font-size: 12px;
+            color: #059669;
+            background-color: #d1fae5;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 8px;
+        }
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            overflow: auto; /* Allow scrolling for modal content */
+        }
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh; /* Increased max-height for better content display */
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .modal-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0; /* Prevent header from shrinking */
+        }
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+        .close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #6b7280;
+        }
+        .modal-body {
+            padding: 20px;
+            flex-grow: 1; /* Allow body to take available space */
+            overflow-y: auto; /* Enable scrolling for comments/likers list */
+        }
+        .comment-form {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            align-items: flex-end; /* Align input and button at the bottom */
+        }
+        .comment-input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 20px;
+            font-size: 14px;
+            resize: none;
+            min-height: 36px;
+            max-height: 100px;
+            overflow-y: auto; /* Allow scrolling within textarea */
+        }
+        .comment-submit {
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 14px;
+            cursor: pointer;
+            height: 36px;
+            flex-shrink: 0; /* Prevent button from shrinking */
+        }
+        .comment-submit:hover {
+            background-color: #2563eb;
+        }
+        .comment-submit:disabled {
+            background-color: #9ca3af;
+            cursor: not-allowed;
+        }
+        .comments-list, .likers-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .comment-item, .liker-item {
+            display: flex;
+            gap: 12px;
+            align-items: center; /* Align avatar and content vertically */
+        }
+        .comment-avatar, .liker-avatar {
+            width: 32px;
+            height: 32px;
+            background-color: #e5e7eb;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #6b7280;
+            flex-shrink: 0;
+            overflow: hidden;
+            font-size: 12px;
+        }
+        .comment-avatar img, .liker-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .comment-content, .liker-content {
+            flex: 1;
+        }
+        .comment-user, .liker-username {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+        .comment-text {
+            font-size: 14px;
+            color: #1a1a1a;
+            line-height: 1.4;
+            margin-bottom: 4px;
+        }
+        .comment-time {
+            font-size: 12px;
+            color: #6b7280;
+        }
+        .no-comments, .no-likers {
+            text-align: center;
+            color: #6b7280;
+            font-size: 14px;
+            padding: 20px;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #6b7280;
+        }
+        
+        /* Infinite Scroll Styles */
+        .infinite-scroll-container {
+            position: relative;
+        }
+        .loading-more {
+            text-align: center;
+            padding: 20px;
+            color: #6b7280;
+            display: none;
+        }
+        .loading-more.active {
+            display: block;
+        }
+        .loading-more p {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(107, 114, 128, 0.3);
+            border-radius: 50%;
+            border-top-color: #3b82f6;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .end-of-feed {
+            text-align: center;
+            padding: 20px;
+            color: #6b7280;
+            font-style: italic;
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 240px;
+                margin-top: 60px;
+                padding: 0px;
+                min-height: calc(100vh - 60px);
+            }
+            body{
+                margin: 0px;
+                padding: 5px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+     <!-- NEW: Loading Modal -->
+    <div id="loadingModal" class="loading-modal">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <div class="loading-text" id="loadingMessage">Sharing to Facebook...</div>
+            <div class="loading-details" id="loadingDetails">Please wait while we post your content.</div>
+            <div id="loadingResult"></div>
+            <div class="loading-actions">
+                <button class="loading-button" id="closeLoading">Close</button>
+            </div>
+        </div>
+    </div>
+    <div class="maincontent">
+        <div class="container">
+            <div class="feed-header">
+                <h1 class="feed-title">Your Posts</h1>
+                <p class="feed-subtitle">Posts from you</p>
+            </div>
+            
+            <div class="infinite-scroll-container">
+                {% if posts %}
+                    <div id="posts-container">
+                        {% for post in posts %}
+                            <div class="post-card" data-post-id="{{ post.id }}">
+                                <div class="post-header">
+                                    <div class="post-user-info">
+                                        <div class="avatar">
+                                            {% if post.user.profile_photo %}
+                                                <img src="{{ post.user.profile_photo.url }}" alt="{{ post.user.username }}">
+                                            {% else %}
+                                                {{ post.user.username|first|upper }}
+                                            {% endif %}
+                                        </div>
+                                        <div class="user-details">
+                                            <div class="username">
+                                                {{ post.user.username }}
+                                                {% if post.user != request.user %}
+                                                    <span class="friend-indicator">Friend</span>
+                                                {% endif %}
+                                            </div>
+                                            <div class="user-handle">@{{ post.user.first_name }}</div>
+                                            <div class="timestamp">{{ post.created_at|timesince }} ago</div>
+                                        </div>
+                                    </div>
+                                    <div class="post-meta">
+                                        <div class="dropdown">
+                                            <button class="menu-button">⋯</button>
+                                            <div class="dropdown-content">
+                                                <a href="#" class="share-facebook" data-post-id="{{ post.id }}">
+                                                    <i class="fab fa-facebook-f dropdown-icon"></i> Share to Facebook
+                                                </a>                                      
+                                                <a href="#" class="share-instagram" data-post-id="{{ post.id }}">
+                                                    <i class="fab fa-instagram dropdown-icon"></i> Share to Instagram
+                                                </a> 
+                                                <a href="{% url 'posts:linkedin_login' post.id %}" class="share-linkedin" data-post-id="{{ post.id }}">
+                                                    <i class="fab fa-linkedin-in dropdown-icon"></i> Share to LinkedIn
+                                                </a>
+                                                <a href="{% url 'posts:delete_post' post.id %}" class="delete-post" data-post-id="{{ post.id }}">
+                                                    <i class="fas fa-trash dropdown-icon"></i> Delete Post
+                                                </a> 
+                                                <a href="{% url 'posts:edit_post' post.id %}" class="edit-post" data-post-id="{{ post.id }}">
+                                                    <i class="fas fa-edit dropdown-icon"></i> Edit Post
+                                                </a>
+                                            </div>
+                                        </div>    
+                                    </div>
+                                </div>
+                                <div class="post-content">
+                                    {% if post.post_type == 'text' %}
+                                        {% if post.text_content %}
+                                            <div class="text-content">{{ post.text_content }}</div>
+                                        {% endif %}
+                                    {% elif post.post_type == 'image' %}
+                                        {% if post.caption %}
+                                            <div class="caption">{{ post.caption }}</div>
+                                        {% endif %}
+                                        {% if post.image %}
+                                            <div class="media-content">
+                                                <img src="{{ post.image.url }}" alt="Post image" class="post-image">
+                                            </div>
+                                        {% endif %}
+                                    {% elif post.post_type == 'video' %}
+                                        {% if post.caption %}
+                                            <div class="caption">{{ post.caption }}</div>
+                                        {% endif %}
+                                        {% if post.video %}
+                                            <div class="media-content">
+                                                <video controls class="post-video">
+                                                    <source src="{{ post.video.url }}" type="video/mp4">
+                                                    Your browser does not support the video tag.
+                                                </video>
+                                            </div>
+                                        {% endif %}
+                                    {% elif post.post_type == 'poll' %}
+                                        {% if post.text_content %}
+                                            <div class="text-content">{{ post.text_content }}</div>
+                                        {% endif %}
+                                        <!-- Poll content would go here -->
+                                    {% endif %}
+                                </div>
+                                <div class="post-actions">
+                                    <button class="action-button like-button {% if post.user_has_liked %}liked{% endif %}"
+                                            data-post-id="{{ post.id }}">
+                                        <span class="heart-icon {% if post.user_has_liked %}liked{% endif %}">♥</span>
+                                        <span class="like-count" data-post-id="{{ post.id }}">{{ post.get_like_count }}</span>
+                                    </button>
+                                    <button class="action-button comment-button" data-post-id="{{ post.id }}">
+                                        <span>💬</span>
+                                        <span class="comment-count">{{ post.get_comment_count }}</span>
+                                    </button>
+                                    <button class="action-button">
+                                        <span>↗</span>
+                                        <span>Share</span>
+                                    </button>
+                                    <button class="action-button bookmark-button {% if post.user_has_bookmarked %}bookmarked{% endif %}"
+                                            data-post-id="{{ post.id }}">
+                                        <span class="bookmark-icon">{% if post.user_has_bookmarked %}✅{% else %}🔖{% endif %}</span>
+                                        <span class="bookmark-text">{% if post.user_has_bookmarked %}Saved{% else %}Bookmark{% endif %}</span>
+                                    </button>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <!-- Loading indicator for infinite scroll -->
+                    <div class="loading-more" id="loading-more">
+                        <p><span class="loading-spinner"></span> Loading more posts...</p>
+                    </div>
+                    
+                    <!-- End of feed message -->
+                    <div class="end-of-feed" id="end-of-feed" style="display: none;">
+                        You've reached the end of your posts
+                    </div>
+                {% else %}
+                    <div class="no-posts">
+                        <h3>No posts to show</h3>
+                        <p>Create your first post!</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Comments Modal -->
+        <div id="commentsModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">Comments</h2>
+                    <button class="close" data-modal="commentsModal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="comment-form">
+                        <textarea class="comment-input" placeholder="Write a comment..." rows="1"></textarea>
+                        <button class="comment-submit" disabled>Post</button>
+                    </div>
+                    <div class="comments-list">
+                        <div class="loading">Loading comments...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Likers Modal -->
+        <div id="likersModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">Likes</h2>
+                    <button class="close" data-modal="likersModal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="likers-list">
+                        <div class="loading">Loading likers...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // CSRF Token for Django
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        const csrftoken = getCookie('csrftoken');
+        
+        // Infinite Scroll Implementation
+        let isLoading = false;
+        let currentPage = {{ posts.number }};
+        let totalPages = {{ posts.paginator.num_pages }};
+        let loadingMoreElement = document.getElementById('loading-more');
+        let postsContainer = document.getElementById('posts-container');
+        let endOfFeedElement = document.getElementById('end-of-feed');
+        
+        // Function to load more posts
+        async function loadMorePosts() {
+            if (isLoading || currentPage >= totalPages) return;
+            
+            isLoading = true;
+            loadingMoreElement.classList.add('active');
+            
+            try {
+                const nextPage = currentPage + 1;
+                const response = await fetch(`?page=${nextPage}`);
+                const html = await response.text();
+                
+                // Parse the returned HTML
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const newPosts = doc.querySelectorAll('#posts-container .post-card');
+                
+                if (newPosts.length > 0) {
+                    // Append new posts to the container
+                    newPosts.forEach(post => {
+                        postsContainer.appendChild(post.cloneNode(true));
+                    });
+                    
+                    // Update current page
+                    currentPage = nextPage;
+                    
+                    // Re-attach event listeners to the new posts
+                    attachEventListeners();
+                    
+                    // Check if we've reached the end
+                    if (currentPage >= totalPages) {
+                        endOfFeedElement.style.display = 'block';
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading more posts:', error);
+            } finally {
+                isLoading = false;
+                loadingMoreElement.classList.remove('active');
+            }
+        }
+        
+        // Function to attach event listeners to posts
+        function attachEventListeners() {
+            // Like functionality
+            document.querySelectorAll('.like-button:not(.event-attached)').forEach(button => {
+                button.classList.add('event-attached');
+                button.addEventListener('click', async function() {
+                    const postId = this.dataset.postId;
+                    const heartIcon = this.querySelector('.heart-icon');
+                    const likeCountSpan = this.querySelector('.like-count');
+                    try {
+                        const response = await fetch(`/posts/post/${postId}/like/`, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRFToken': csrftoken,
+                                'Content-Type': 'application/json',
+                            },
+                        });
+                        const data = await response.json();
+                        if (data.success) {
+                            if (data.liked) {
+                                this.classList.add('liked');
+                                heartIcon.classList.add('liked');
+                            } else {
+                                this.classList.remove('liked');
+                                heartIcon.classList.remove('liked');
+                            }
+                            likeCountSpan.textContent = data.like_count;
+                        } else {
+                            console.error('Error toggling like:', data.error);
+                            alert('Error toggling like: ' + data.error);
+                        }
+                    } catch (error) {
+                        console.error('Network error toggling like:', error);
+                        alert('Network error toggling like. Please try again.');
+                    }
+                });
+            });
+            
+            // Comment button functionality
+            document.querySelectorAll('.comment-button:not(.event-attached)').forEach(button => {
+                button.classList.add('event-attached');
+                button.addEventListener('click', function() {
+                    currentPostIdForComments = this.dataset.postId;
+                    commentsModal.style.display = 'block';
+                    loadComments(currentPostIdForComments);
+                });
+            });
+            
+            // Like count functionality
+            document.querySelectorAll('.like-count:not(.event-attached)').forEach(span => {
+                span.classList.add('event-attached');
+                span.addEventListener('click', function() {
+                    currentPostIdForLikers = this.dataset.postId;
+                    likersModal.style.display = 'block';
+                    loadLikers(currentPostIdForLikers);
+                });
+            });
+            
+            // Bookmark functionality
+            document.querySelectorAll('.bookmark-button:not(.event-attached)').forEach(button => {
+                button.classList.add('event-attached');
+                button.addEventListener('click', async function() {
+                    const postId = this.dataset.postId;
+                    const bookmarkIcon = this.querySelector('.bookmark-icon');
+                    const bookmarkText = this.querySelector('.bookmark-text');
+                    try {
+                        const response = await fetch(`/posts/post/${postId}/bookmark/`, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRFToken': csrftoken,
+                                'Content-Type': 'application/json',
+                            },
+                        });
+                        const data = await response.json();
+                        if (data.success) {
+                            if (data.bookmarked) {
+                                this.classList.add('bookmarked');
+                                bookmarkIcon.textContent = '✅'; // Filled bookmark icon
+                                bookmarkText.textContent = 'Saved';
+                            } else {
+                                this.classList.remove('bookmarked');
+                                bookmarkIcon.textContent = '🔖'; // Outline bookmark icon
+                                bookmarkText.textContent = 'Bookmark';
+                            }
+                        } else {
+                            console.error('Error toggling bookmark:', data.error);
+                            alert('Error toggling bookmark: ' + data.error);
+                        }
+                    } catch (error) {
+                        console.error('Network error toggling bookmark:', error);
+                        alert('Network error toggling bookmark. Please try again.');
+                    }
+                });
+            });
+            
+            // Share to Facebook
+            document.querySelectorAll('.share-facebook:not(.event-attached)').forEach(link => {
+                link.classList.add('event-attached');
+                link.addEventListener('click', async function(e) {
+                    e.preventDefault();
+                    const postId = this.dataset.postId;
+                    showLoading('Facebook');
+                    
+                    try {
+                        const response = await fetch(`/posts/post/${postId}/share/facebook/`, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRFToken': csrftoken,
+                                'Content-Type': 'application/json',
+                            },
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            showResult(true, data.message || 'Posted to Facebook successfully!');
+                        } else {
+                            showResult(false, data.error || 'Failed to post to Facebook.');
+                        }
+                    } catch (error) {
+                        console.error('Error sharing to Facebook:', error);
+                        showResult(false, 'Network error. Please try again.');
+                    }
+                });
+            });
+            
+            // Share to Instagram
+            document.querySelectorAll('.share-instagram:not(.event-attached)').forEach(link => {
+                link.classList.add('event-attached');
+                link.addEventListener('click', async function(e) {
+                    e.preventDefault();
+                    const postId = this.dataset.postId;
+                    showLoading('Instagram');
+                    
+                    try {
+                        const response = await fetch(`/posts/post/${postId}/share/instagram/`, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRFToken': csrftoken,
+                                'Content-Type': 'application/json',
+                            },
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            showResult(true, data.message || 'Posted to Instagram successfully!');
+                        } else {
+                            showResult(false, data.error || 'Failed to post to Instagram.');
+                        }
+                    } catch (error) {
+                        console.error('Error sharing to Instagram:', error);
+                        showResult(false, 'Network error. Please try again.');
+                    }
+                });
+            });
+        }
+        
+        // Attach event listeners to initial posts
+        attachEventListeners();
+        
+        // Infinite scroll detection
+        window.addEventListener('scroll', function() {
+            // Check if we're near the bottom of the page
+            if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500) {
+                loadMorePosts();
+            }
+        });
+        
+        // NEW: Loading modal functionality
+        const loadingModal = document.getElementById('loadingModal');
+        const loadingMessage = document.getElementById('loadingMessage');
+        const loadingDetails = document.getElementById('loadingDetails');
+        const loadingResult = document.getElementById('loadingResult');
+        const closeLoadingBtn = document.getElementById('closeLoading');
+        
+        function showLoading(platform) {
+            loadingMessage.textContent = `Sharing to ${platform}...`;
+            loadingDetails.textContent = 'Please wait while we post your content.';
+            loadingResult.innerHTML = '';
+            loadingModal.style.display = 'flex';
+        }
+        
+        function hideLoading() {
+            loadingModal.style.display = 'none';
+        }
+        
+        function showResult(success, message) {
+            const resultClass = success ? 'loading-success' : 'loading-error';
+            loadingResult.innerHTML = `<div class="${resultClass}">${message}</div>`;
+            loadingDetails.textContent = '';
+            
+            if (success) {
+                loadingMessage.textContent = 'Success!';
+            } else {
+                loadingMessage.textContent = 'Error';
+            }
+        }
+        
+        closeLoadingBtn.addEventListener('click', hideLoading);
+        
+        // Comment modal functionality
+        const commentsModal = document.getElementById('commentsModal');
+        const commentsCloseBtn = commentsModal.querySelector('.close');
+        const commentInput = commentsModal.querySelector('.comment-input');
+        const commentSubmit = commentsModal.querySelector('.comment-submit');
+        const commentsList = commentsModal.querySelector('.comments-list');
+        let currentPostIdForComments = null;
+        
+        commentsCloseBtn.addEventListener('click', function() {
+            commentsModal.style.display = 'none';
+            currentPostIdForComments = null;
+            commentInput.value = '';
+            commentInput.style.height = 'auto';
+            commentSubmit.disabled = true;
+        });
+        
+        window.addEventListener('click', function(event) {
+            if (event.target === commentsModal) {
+                commentsModal.style.display = 'none';
+                currentPostIdForComments = null;
+                commentInput.value = '';
+                commentInput.style.height = 'auto';
+                commentSubmit.disabled = true;
+            }
+            if (event.target === likersModal) {
+                likersModal.style.display = 'none';
+                currentPostIdForLikers = null;
+            }
+        });
+        
+        commentInput.addEventListener('input', function() {
+            commentSubmit.disabled = this.value.trim() === '';
+        });
+        
+        commentInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 100) + 'px';
+        });
+        
+        commentSubmit.addEventListener('click', async function() {
+            const content = commentInput.value.trim();
+            if (!content || !currentPostIdForComments) return;
+            this.disabled = true;
+            this.textContent = 'Posting...';
+            try {
+                const response = await fetch(`/posts/post/${currentPostIdForComments}/comment/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrftoken,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ content: content })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    commentInput.value = '';
+                    commentInput.style.height = 'auto';
+                    addCommentToList(data.comment);
+                    const postCard = document.querySelector(`[data-post-id="${currentPostIdForComments}"]`);
+                    const commentCountSpan = postCard.querySelector('.comment-count');
+                    if (commentCountSpan) {
+                        commentCountSpan.textContent = data.comment_count;
+                    }
+                } else {
+                    alert('Error posting comment: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error posting comment:', error);
+                alert('Error posting comment. Please check your network connection.');
+            } finally {
+                this.disabled = true;
+                this.textContent = 'Post';
+            }
+        });
+        
+        async function loadComments(postId) {
+            commentsList.innerHTML = '<div class="loading">Loading comments...</div>';
+            try {
+                const response = await fetch(`/posts/post/${postId}/comments/`);
+                const data = await response.json();
+                if (data.success) {
+                    displayComments(data.comments);
+                } else {
+                    commentsList.innerHTML = '<div class="no-comments">Error loading comments: ' + data.error + '</div>';
+                }
+            } catch (error) {
+                console.error('Error loading comments:', error);
+                commentsList.innerHTML = '<div class="no-comments">Error loading comments. Please try again.</div>';
+            }
+        }
+        
+        function displayComments(comments) {
+            if (comments.length === 0) {
+                commentsList.innerHTML = '<div class="no-comments">No comments yet. Be the first to comment!</div>';
+                return;
+            }
+            commentsList.innerHTML = '';
+            comments.forEach(comment => {
+                addCommentToList(comment);
+            });
+        }
+        
+        function addCommentToList(comment) {
+            const commentElement = document.createElement('div');
+            commentElement.className = 'comment-item';
+            const avatarContent = comment.user.profile_photo
+                ? `<img src="${comment.user.profile_photo}" alt="${comment.user.username}">`
+                : comment.user.username.charAt(0).toUpperCase();
+            commentElement.innerHTML = `
+                <div class="comment-avatar">
+                    ${avatarContent}
+                </div>
+                <div class="comment-content">
+                    <div class="comment-user">${comment.user.username}</div>
+                    <div class="comment-text">${comment.content}</div>
+                    <div class="comment-time">${comment.time_ago}</div>
+                </div>
+            `;
+            if (comment.time_ago === 'just now') {
+                if (commentsList.querySelector('.no-comments')) {
+                    commentsList.innerHTML = '';
+                }
+                commentsList.insertBefore(commentElement, commentsList.firstChild);
+            } else {
+                commentsList.appendChild(commentElement);
+            }
+        }
+        
+        // Likers modal functionality
+        const likersModal = document.getElementById('likersModal');
+        const likersCloseBtn = likersModal.querySelector('.close');
+        const likersList = likersModal.querySelector('.likers-list');
+        let currentPostIdForLikers = null;
+        
+        likersCloseBtn.addEventListener('click', function() {
+            likersModal.style.display = 'none';
+            currentPostIdForLikers = null;
+        });
+        
+        async function loadLikers(postId) {
+            likersList.innerHTML = '<div class="loading">Loading likers...</div>';
+            try {
+                const response = await fetch(`/posts/post/${postId}/likers/`);
+                const data = await response.json();
+                if (data.success) {
+                    displayLikers(data.likers);
+                } else {
+                    likersList.innerHTML = '<div class="no-likers">Error loading likers: ' + data.error + '</div>';
+                }
+            } catch (error) {
+                console.error('Error loading likers:', error);
+                likersList.innerHTML = '<div class="no-likers">Error loading likers. Please try again.</div>';
+            }
+        }
+        
+        function displayLikers(likers) {
+            if (likers.length === 0) {
+                likersList.innerHTML = '<div class="no-likers">No likes yet.</div>';
+                return;
+            }
+            likersList.innerHTML = '';
+            likers.forEach(liker => {
+                const likerElement = document.createElement('div');
+                likerElement.className = 'liker-item';
+                const avatarContent = liker.profile_photo
+                    ? `<img src="${liker.profile_photo}" alt="${liker.username}">`
+                    : liker.username.charAt(0).toUpperCase();
+                likerElement.innerHTML = `
+                    <div class="liker-avatar">
+                        ${avatarContent}
+                    </div>
+                    <div class="liker-content">
+                        <div class="liker-username">${liker.username}</div>
+                    </div>
+                `;
+                likersList.appendChild(likerElement);
+            });
+        }
+        
+        // Dropdown menu functionality
+        document.querySelectorAll('.menu-button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.stopPropagation(); // Prevent the click from bubbling up
+                const dropdown = this.parentElement;
+                dropdown.classList.toggle('show');
+            });
+        });
+        
+        // Close dropdown when clicking elsewhere
+        window.addEventListener('click', function() {
+            document.querySelectorAll('.dropdown').forEach(dropdown => {
+                dropdown.classList.remove('show');
+            });
+        });
+    </script>
+{% endblock %}

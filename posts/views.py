@@ -62,7 +62,7 @@ def feed_view(request):
 from django.core.paginator import Paginator
 from django.shortcuts import render
 
-def your_feed(request):
+def my_feed(request):
     """Main feed view - only user's own posts"""
     if request.user.is_authenticated:
         posts = Post.objects.filter(
@@ -81,7 +81,7 @@ def your_feed(request):
         post.user_has_liked = post.likes.filter(user=request.user).exists()
         post.user_has_bookmarked = post.bookmarks.filter(user=request.user).exists()
     
-    return render(request, 'your_feed.html', {'posts': posts})
+    return render(request, 'my_feed.html', {'posts': posts})
 
 @login_required
 def delete_post(request, post_id):
@@ -94,7 +94,7 @@ def delete_post(request, post_id):
     else:
         messages.error(request, "Invalid request method.")
     
-    return redirect('posts:your_feed')  # Always redirect
+    return redirect('posts:my_feed')  # Always redirect
 
 from posts.forms import PostEditForm
 @login_required
@@ -106,7 +106,7 @@ def edit_post(request, post_id):
         if form.is_valid():
             form.save()
             messages.success(request, "Post updated successfully.")
-            return redirect('posts:your_feed')
+            return redirect('posts:my_feed')
     else:
         form = PostEditForm(instance=post)
     
@@ -443,17 +443,24 @@ def post_to_facebook(request, post_id):
         else:
             messages.error(request, 'Unsupported post type or missing media')
             return redirect('some_view_name')  # Redirect to appropriate view
-        
+
         if response.status_code == 200:
-            messages.success(request, 'Post shared to Facebook successfully!')
+            return JsonResponse({
+                'success': True, 
+                'message': 'Post shared to Facebook successfully!'
+            })
         else:
-            error_msg = response.json().get('error', {}).get('message', 'Unknown error')
-            messages.error(request, f'Facebook error: {error_msg}')
-            
+            response_data = response.json()
+            error_msg = response_data.get('error', {}).get('message', 'Unknown error')
+            return JsonResponse({
+                'success': False, 
+                'error': f'Facebook error: {error_msg}'
+            })
+
     except Exception as e:
         messages.error(request, f'Error: {str(e)}')
-    
-    return redirect('posts:your_feed')  # Redirect back to where you came from
+
+    return redirect('posts:my_feed')  # Redirect back to where you came from
 
 import requests
 from django.conf import settings
@@ -493,7 +500,7 @@ def post_to_instagram(request, post_id):
 
         if post.post_type == 'text':
             messages.error(request, "Instagram does not support text-only posts.")
-            return redirect('posts:your_feed')
+            return redirect('posts:my_feed')
 
         # Domain for public URLs
         domain = "https://sociov1.pythonanywhere.com"
@@ -510,7 +517,7 @@ def post_to_instagram(request, post_id):
             print("Video URL:", media_url)
         else:
             messages.error(request, "Missing media file.")
-            return redirect('posts:your_feed')
+            return redirect('posts:my_feed')
 
         # Step 1: Create media container
         media_api_url = f"https://graph.facebook.com/v19.0/{ig_user_id}/media"
@@ -533,7 +540,7 @@ def post_to_instagram(request, post_id):
         if 'id' not in media_json:
             error_msg = media_json.get('error', {}).get('message', 'Failed to create Instagram media container.')
             messages.error(request, f"Instagram error: {error_msg}")
-            return redirect('posts:your_feed')
+            return redirect('posts:my_feed')
 
         creation_id = media_json['id']
 
@@ -542,7 +549,7 @@ def post_to_instagram(request, post_id):
             is_ready = wait_for_video_ready(creation_id, access_token)
             if not is_ready:
                 messages.error(request, "Instagram video not ready to publish. Please try again later.")
-                return redirect('posts:your_feed')
+                return redirect('posts:my_feed')
 
         # Step 2: Publish media
         publish_url = f"https://graph.facebook.com/v19.0/{ig_user_id}/media_publish"
@@ -559,11 +566,25 @@ def post_to_instagram(request, post_id):
             error_msg = publish_json.get('error', {}).get('message', 'Failed to publish to Instagram.')
             messages.error(request, f"Instagram error: {error_msg}")
 
+        if publish_response.status_code == 200:
+            return JsonResponse({
+                'success': True, 
+                'message': 'Post shared to Instagram successfully!'
+            })
+        else:
+            response_data = publish_response.json()
+            error_msg = response_data.get('error', {}).get('message', 'Unknown error')
+            return JsonResponse({
+                'success': False, 
+                'error': f'Instagram error: {error_msg}'
+            })
+
+
     except Exception as e:
         messages.error(request, f"Error: {str(e)}")
 
 
-    return redirect('posts:your_feed')
+    return redirect('posts:my_feed')
 import requests
 from django.shortcuts import redirect, get_object_or_404
 from django.conf import settings
@@ -585,7 +606,10 @@ def linkedin_login(request, post_id):
     request.session["post_id"] = post_id
 
     # Get LinkedIn configuration for this user
-    linkedin_config = get_object_or_404(LinkedInConfiguration, created_by=user)
+    linkedin_config = LinkedInConfiguration.objects.filter(created_by=user).first()
+    if not linkedin_config:
+        messages.error(request, "LinkedIn configuration not found. Please set it up first.")
+        return redirect('posts:my_feed')
     
     auth_url = (
         "https://www.linkedin.com/oauth/v2/authorization"
@@ -604,7 +628,7 @@ def linkedin_callback(request):
     
     if not post_id:
         messages.error(request, "Post ID not found in session")
-        return redirect('posts:your_feed')
+        return redirect('posts:my_feed')
         
     post_obj = get_object_or_404(Post, id=post_id)
     
@@ -613,7 +637,7 @@ def linkedin_callback(request):
 
     if not code:
         messages.error(request, "No code returned from LinkedIn")
-        return redirect('posts:your_feed')
+        return redirect('posts:my_feed')
 
     token_url = "https://www.linkedin.com/oauth/v2/accessToken"
     payload = {
@@ -633,7 +657,7 @@ def linkedin_callback(request):
         
         if not access_token:
             messages.error(request, "Failed to get LinkedIn access token")
-            return redirect('posts:your_feed')
+            return redirect('posts:my_feed')
 
         # Save token in DB with expiry
         expiry_time = now() + datetime.timedelta(seconds=expires_in)
@@ -653,7 +677,7 @@ def linkedin_callback(request):
         
     except Exception as e:
         messages.error(request, f"Error during LinkedIn authentication: {str(e)}")
-        return redirect('posts:your_feed')
+        return redirect('posts:my_feed')
 
 def post_to_linkedin(request, post_id, access_token=None):
     try:
@@ -715,7 +739,7 @@ def post_to_linkedin(request, post_id, access_token=None):
             
             if "value" not in reg_res:
                 messages.error(request, "Failed to register image upload")
-                return redirect('posts:your_feed')
+                return redirect('posts:my_feed')
                 
             upload_url = reg_res["value"]["uploadMechanism"]["com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest"]["uploadUrl"]
             asset_id = reg_res["value"]["asset"]
@@ -728,7 +752,7 @@ def post_to_linkedin(request, post_id, access_token=None):
                 
             if upload_response.status_code != 201:
                 messages.error(request, "Failed to upload image to LinkedIn")
-                return redirect('posts:your_feed')
+                return redirect('posts:my_feed')
 
             # 3. Create Post
             post_data = {
@@ -770,7 +794,7 @@ def post_to_linkedin(request, post_id, access_token=None):
             
             if "value" not in reg_res:
                 messages.error(request, "Failed to register video upload")
-                return redirect('posts:your_feed')
+                return redirect('posts:my_feed')
                 
             upload_url = reg_res["value"]["uploadMechanism"]["com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest"]["uploadUrl"]
             asset_id = reg_res["value"]["asset"]
@@ -783,7 +807,7 @@ def post_to_linkedin(request, post_id, access_token=None):
                 
             if upload_response.status_code != 201:
                 messages.error(request, "Failed to upload video to LinkedIn")
-                return redirect('posts:your_feed')
+                return redirect('posts:my_feed')
 
             # 3. Create Post
             post_data = {
@@ -807,7 +831,7 @@ def post_to_linkedin(request, post_id, access_token=None):
 
         else:
             messages.error(request, "Unsupported post type or missing media")
-            return redirect('posts:your_feed')
+            return redirect('posts:my_feed')
 
         print("LinkedIn post response status:", r.status_code)
         print("LinkedIn post response:", r.json())
@@ -817,4 +841,4 @@ def post_to_linkedin(request, post_id, access_token=None):
         messages.error(request, f"Error: {str(e)}")
         print("Exception in post_to_linkedin:", str(e))
     
-    return redirect('posts:your_feed')
+    return redirect('posts:my_feed')

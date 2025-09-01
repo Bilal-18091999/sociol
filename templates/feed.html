@@ -26,29 +26,26 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background-color: #f8f9fa;
             padding: 20px;
+            min-height: 100vh; /* Ensure body takes full viewport height */
         }
-
         .container {
             max-width: 600px;
             margin: 0 auto;
+            padding-bottom: 40px; /* Add space for loading indicator */
         }
-
         .feed-header {
             margin-bottom: 24px;
         }
-
         .feed-title {
             font-size: 24px;
             font-weight: 600;
             color: #1a1a1a;
             margin-bottom: 8px;
         }
-
         .feed-subtitle {
             font-size: 14px;
             color: #6b7280;
         }
-
         .post-card {
             background: white;
             border: 1px solid #e5e7eb;
@@ -57,21 +54,18 @@
             margin-bottom: 16px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
-
         .post-header {
             display: flex;
             align-items: flex-start;
             justify-content: space-between;
             margin-bottom: 12px;
         }
-
         .post-user-info {
             display: flex;
             align-items: flex-start;
             gap: 12px;
             flex: 1;
         }
-
         .avatar {
             width: 40px;
             height: 40px;
@@ -85,18 +79,15 @@
             flex-shrink: 0;
             overflow: hidden;
         }
-
         .avatar img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
-
         .user-details {
             flex: 1;
             min-width: 0;
         }
-
         .username {
             font-size: 14px;
             font-weight: 600;
@@ -104,25 +95,21 @@
             margin-bottom: 2px;
             word-break: break-word;
         }
-
         .user-handle {
             font-size: 12px;
             color: #6b7280;
             margin-bottom: 4px;
             word-break: break-word;
         }
-
         .timestamp {
             font-size: 12px;
             color: #6b7280;
         }
-
         .post-meta {
             display: flex;
             align-items: center;
             gap: 8px;
         }
-
         .post-type {
             font-size: 12px;
             color: #6b7280;
@@ -131,11 +118,9 @@
             border-radius: 4px;
             text-transform: capitalize;
         }
-
         .post-type.text { background-color: #dbeafe; color: #1e40af; }
         .post-type.image { background-color: #dcfce7; color: #166534; }
         .post-type.video { background-color: #fef3c7; color: #92400e; }
-
         .menu-button {
             background: none;
             border: none;
@@ -144,11 +129,9 @@
             color: #6b7280;
             font-size: 16px;
         }
-
         .post-content {
             margin-bottom: 16px;
         }
-
         .text-content {
             font-size: 14px;
             color: #1a1a1a;
@@ -156,7 +139,6 @@
             white-space: pre-wrap;
             word-wrap: break-word;
         }
-
         .caption {
             font-size: 14px;
             color: #1a1a1a;
@@ -165,13 +147,11 @@
             white-space: pre-wrap;
             word-wrap: break-word;
         }
-
         .media-content {
             border-radius: 8px;
             overflow: hidden;
             margin-top: 8px;
         }
-
         .post-image {
             width: 100%;
             height: auto;
@@ -179,14 +159,12 @@
             object-fit: cover;
             display: block;
         }
-
         .post-video {
             width: 100%;
             height: auto;
             max-height: 400px;
             display: block;
         }
-
         .post-actions {
             display: flex;
             align-items: center;
@@ -194,7 +172,6 @@
             padding-top: 12px;
             border-top: 1px solid #f3f4f6;
         }
-
         .action-button {
             display: flex;
             align-items: center;
@@ -208,57 +185,45 @@
             color: #6b7280;
             transition: all 0.2s;
         }
-
         .action-button:hover {
             background-color: #f3f4f6;
         }
-
         .like-button {
             color: #6b7280;
         }
-
         .like-button.liked {
             color: #ef4444; /* Red color for liked state */
         }
-
         .like-button:hover {
             background-color: #fef2f2;
         }
-
         .bookmark-button {
             margin-left: auto;
         }
-
         /* NEW: Styles for bookmarked state */
         .bookmark-button.bookmarked .bookmark-icon,
         .bookmark-button.bookmarked .bookmark-text {
             color: #3b82f6; /* Blue color for bookmarked state */
         }
-
         .heart-icon {
             font-size: 16px;
             transition: all 0.2s;
         }
-
         .heart-icon.liked {
             color: #ef4444; /* Red color for liked state */
         }
-
         .no-posts {
             text-align: center;
             padding: 40px 20px;
             color: #6b7280;
         }
-
         .no-posts h3 {
             font-size: 18px;
             margin-bottom: 8px;
         }
-
         .no-posts p {
             font-size: 14px;
         }
-
         .friend-indicator {
             font-size: 12px;
             color: #059669;
@@ -267,7 +232,6 @@
             border-radius: 4px;
             margin-left: 8px;
         }
-
         /* Modal Styles */
         .modal {
             display: none;
@@ -280,7 +244,6 @@
             background-color: rgba(0, 0, 0, 0.5);
             overflow: auto; /* Allow scrolling for modal content */
         }
-
         .modal-content {
             background-color: white;
             margin: 5% auto;
@@ -293,7 +256,6 @@
             display: flex;
             flex-direction: column;
         }
-
         .modal-header {
             padding: 16px 20px;
             border-bottom: 1px solid #e5e7eb;
@@ -302,13 +264,11 @@
             align-items: center;
             flex-shrink: 0; /* Prevent header from shrinking */
         }
-
         .modal-title {
             font-size: 18px;
             font-weight: 600;
             color: #1a1a1a;
         }
-
         .close {
             background: none;
             border: none;
@@ -316,20 +276,17 @@
             cursor: pointer;
             color: #6b7280;
         }
-
         .modal-body {
             padding: 20px;
             flex-grow: 1; /* Allow body to take available space */
             overflow-y: auto; /* Enable scrolling for comments/likers list */
         }
-
         .comment-form {
             display: flex;
             gap: 12px;
             margin-bottom: 20px;
             align-items: flex-end; /* Align input and button at the bottom */
         }
-
         .comment-input {
             flex: 1;
             padding: 8px 12px;
@@ -341,7 +298,6 @@
             max-height: 100px;
             overflow-y: auto; /* Allow scrolling within textarea */
         }
-
         .comment-submit {
             background-color: #3b82f6;
             color: white;
@@ -353,28 +309,23 @@
             height: 36px;
             flex-shrink: 0; /* Prevent button from shrinking */
         }
-
         .comment-submit:hover {
             background-color: #2563eb;
         }
-
         .comment-submit:disabled {
             background-color: #9ca3af;
             cursor: not-allowed;
         }
-
         .comments-list, .likers-list {
             display: flex;
             flex-direction: column;
             gap: 16px;
         }
-
         .comment-item, .liker-item {
             display: flex;
             gap: 12px;
             align-items: center; /* Align avatar and content vertically */
         }
-
         .comment-avatar, .liker-avatar {
             width: 32px;
             height: 32px;
@@ -389,48 +340,81 @@
             overflow: hidden;
             font-size: 12px;
         }
-
         .comment-avatar img, .liker-avatar img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
-
         .comment-content, .liker-content {
             flex: 1;
         }
-
         .comment-user, .liker-username {
             font-size: 14px;
             font-weight: 600;
             color: #1a1a1a;
             margin-bottom: 4px;
         }
-
         .comment-text {
             font-size: 14px;
             color: #1a1a1a;
             line-height: 1.4;
             margin-bottom: 4px;
         }
-
         .comment-time {
             font-size: 12px;
             color: #6b7280;
         }
-
         .no-comments, .no-likers {
             text-align: center;
             color: #6b7280;
             font-size: 14px;
             padding: 20px;
         }
-
         .loading {
             text-align: center;
             padding: 20px;
             color: #6b7280;
         }
+        
+        /* Infinite Scroll Styles */
+        .infinite-scroll-container {
+            position: relative;
+        }
+        .loading-more {
+            text-align: center;
+            padding: 20px;
+            color: #6b7280;
+            display: none;
+        }
+        .loading-more.active {
+            display: block;
+        }
+        .loading-more p {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(107, 114, 128, 0.3);
+            border-radius: 50%;
+            border-top-color: #3b82f6;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .end-of-feed {
+            text-align: center;
+            padding: 20px;
+            color: #6b7280;
+            font-style: italic;
+        }
+        
           @media (max-width: 768px) {
 .main-content {
     margin-left: 240px;
@@ -443,7 +427,6 @@ body{
     padding: 0px;
 }
           }
-
     </style>
     <div class="maincontent">
         <div class="container">
@@ -451,101 +434,113 @@ body{
                 <h1 class="feed-title">Your Feed</h1>
                 <p class="feed-subtitle">Posts from you and your friends</p>
             </div>
-
-            {% if posts %}
-                {% for post in posts %}
-                    <div class="post-card" data-post-id="{{ post.id }}">
-                        <div class="post-header">
-                            <div class="post-user-info">
-                                <div class="avatar">
-                                    {% if post.user.profile_photo %}
-                                        <img src="{{ post.user.profile_photo.url }}" alt="{{ post.user.username }}">
-                                    {% else %}
-                                        {{ post.user.username|first|upper }}
+            
+            <div class="infinite-scroll-container">
+                {% if posts %}
+                    <div id="posts-container">
+                        {% for post in posts %}
+                            <div class="post-card" data-post-id="{{ post.id }}">
+                                <div class="post-header">
+                                    <div class="post-user-info">
+                                        <div class="avatar">
+                                            {% if post.user.profile_photo %}
+                                                <img src="{{ post.user.profile_photo.url }}" alt="{{ post.user.username }}">
+                                            {% else %}
+                                                {{ post.user.username|first|upper }}
+                                            {% endif %}
+                                        </div>
+                                        <div class="user-details">
+                                            <div class="username">
+                                                {{ post.user.username }}
+                                                {% if post.user != request.user %}
+                                                    <span class="friend-indicator">Friend</span>
+                                                {% endif %}
+                                            </div>
+                                            <div class="user-handle">@{{ post.user.first_name }}</div>
+                                            <div class="timestamp">{{ post.created_at|timesince }} ago</div>
+                                        </div>
+                                    </div>
+                                    <div class="post-meta">
+                                        {% comment %} <span class="post-type {{ post.post_type }}">{{ post.post_type }}</span> {% endcomment %}
+                                        <button class="menu-button">⋯</button>
+                                    </div>
+                                </div>
+                                <div class="post-content">
+                                    {% if post.post_type == 'text' %}
+                                        {% if post.text_content %}
+                                            <div class="text-content">{{ post.text_content }}</div>
+                                        {% endif %}
+                                    {% elif post.post_type == 'image' %}
+                                        {% if post.caption %}
+                                            <div class="caption">{{ post.caption }}</div>
+                                        {% endif %}
+                                        {% if post.image %}
+                                            <div class="media-content">
+                                                <img src="{{ post.image.url }}" alt="Post image" class="post-image">
+                                            </div>
+                                        {% endif %}
+                                    {% elif post.post_type == 'video' %}
+                                        {% if post.caption %}
+                                            <div class="caption">{{ post.caption }}</div>
+                                        {% endif %}
+                                        {% if post.video %}
+                                            <div class="media-content">
+                                                <video controls class="post-video">
+                                                    <source src="{{ post.video.url }}" type="video/mp4">
+                                                    Your browser does not support the video tag.
+                                                </video>
+                                            </div>
+                                        {% endif %}
+                                    {% elif post.post_type == 'poll' %}
+                                        {% if post.text_content %}
+                                            <div class="text-content">{{ post.text_content }}</div>
+                                        {% endif %}
+                                        <!-- Poll content would go here -->
                                     {% endif %}
                                 </div>
-                                <div class="user-details">
-                                    <div class="username">
-                                        {{ post.user.username }}
-                                        {% if post.user != request.user %}
-                                            <span class="friend-indicator">Friend</span>
-                                        {% endif %}
-                                    </div>
-                                    <div class="user-handle">@{{ post.user.username }}</div>
-                                    <div class="timestamp">{{ post.created_at|timesince }} ago</div>
+                                <div class="post-actions">
+                                    <button class="action-button like-button {% if post.user_has_liked %}liked{% endif %}"
+                                            data-post-id="{{ post.id }}">
+                                        <span class="heart-icon {% if post.user_has_liked %}liked{% endif %}">♥</span>
+                                        <span class="like-count" data-post-id="{{ post.id }}">{{ post.get_like_count }}</span>
+                                    </button>
+                                    <button class="action-button comment-button" data-post-id="{{ post.id }}">
+                                        <span>💬</span>
+                                        <span class="comment-count">{{ post.get_comment_count }}</span>
+                                    </button>
+                                    <button class="action-button">
+                                        <span>↗</span>
+                                        <span>Share</span>
+                                    </button>
+                                    {# UPDATED BOOKMARK BUTTON #}
+                                    <button class="action-button bookmark-button {% if post.user_has_bookmarked %}bookmarked{% endif %}"
+                                            data-post-id="{{ post.id }}">
+                                        <span class="bookmark-icon">{% if post.user_has_bookmarked %}✅{% else %}🔖{% endif %}</span>
+                                        <span class="bookmark-text">{% if post.user_has_bookmarked %}Saved{% else %}Bookmark{% endif %}</span>
+                                    </button>
                                 </div>
                             </div>
-                            <div class="post-meta">
-                                <span class="post-type {{ post.post_type }}">{{ post.post_type }}</span>
-                                <button class="menu-button">⋯</button>
-                            </div>
-                        </div>
-
-                        <div class="post-content">
-                            {% if post.post_type == 'text' %}
-                                {% if post.text_content %}
-                                    <div class="text-content">{{ post.text_content }}</div>
-                                {% endif %}
-                            {% elif post.post_type == 'image' %}
-                                {% if post.caption %}
-                                    <div class="caption">{{ post.caption }}</div>
-                                {% endif %}
-                                {% if post.image %}
-                                    <div class="media-content">
-                                        <img src="{{ post.image.url }}" alt="Post image" class="post-image">
-                                    </div>
-                                {% endif %}
-                            {% elif post.post_type == 'video' %}
-                                {% if post.caption %}
-                                    <div class="caption">{{ post.caption }}</div>
-                                {% endif %}
-                                {% if post.video %}
-                                    <div class="media-content">
-                                        <video controls class="post-video">
-                                            <source src="{{ post.video.url }}" type="video/mp4">
-                                            Your browser does not support the video tag.
-                                        </video>
-                                    </div>
-                                {% endif %}
-                            {% elif post.post_type == 'poll' %}
-                                {% if post.text_content %}
-                                    <div class="text-content">{{ post.text_content }}</div>
-                                {% endif %}
-                                <!-- Poll content would go here -->
-                            {% endif %}
-                        </div>
-
-                        <div class="post-actions">
-                            <button class="action-button like-button {% if post.user_has_liked %}liked{% endif %}"
-                                    data-post-id="{{ post.id }}">
-                                <span class="heart-icon {% if post.user_has_liked %}liked{% endif %}">♥</span>
-                                <span class="like-count" data-post-id="{{ post.id }}">{{ post.get_like_count }}</span>
-                            </button>
-                            <button class="action-button comment-button" data-post-id="{{ post.id }}">
-                                <span>💬</span>
-                                <span class="comment-count">{{ post.get_comment_count }}</span>
-                            </button>
-                            <button class="action-button">
-                                <span>↗</span>
-                                <span>Share</span>
-                            </button>
-                            {# UPDATED BOOKMARK BUTTON #}
-                            <button class="action-button bookmark-button {% if post.user_has_bookmarked %}bookmarked{% endif %}"
-                                    data-post-id="{{ post.id }}">
-                                <span class="bookmark-icon">{% if post.user_has_bookmarked %}✅{% else %}🔖{% endif %}</span>
-                                <span class="bookmark-text">{% if post.user_has_bookmarked %}Saved{% else %}Bookmark{% endif %}</span>
-                            </button>
-                        </div>
+                        {% endfor %}
                     </div>
-                {% endfor %}
-            {% else %}
-                <div class="no-posts">
-                    <h3>No posts to show</h3>
-                    <p>Start following people or create your first post!</p>
-                </div>
-            {% endif %}
+                    
+                    <!-- Loading indicator for infinite scroll -->
+                    <div class="loading-more" id="loading-more">
+                        <p><span class="loading-spinner"></span> Loading more posts...</p>
+                    </div>
+                    
+                    <!-- End of feed message -->
+                    <div class="end-of-feed" id="end-of-feed" style="display: none;">
+                        You've reached the end of your feed
+                    </div>
+                {% else %}
+                    <div class="no-posts">
+                        <h3>No posts to show</h3>
+                        <p>Start following people or create your first post!</p>
+                    </div>
+                {% endif %}
+            </div>
         </div>
-
+        
         <!-- Comments Modal -->
         <div id="commentsModal" class="modal">
             <div class="modal-content">
@@ -564,6 +559,7 @@ body{
                 </div>
             </div>
         </div>
+        
         <!-- Likers Modal -->
         <div id="likersModal" class="modal">
             <div class="modal-content">
@@ -578,6 +574,7 @@ body{
                 </div>
             </div>
         </div>
+        
         <script>
             // CSRF Token for Django
             function getCookie(name) {
@@ -595,42 +592,164 @@ body{
                 return cookieValue;
             }
             const csrftoken = getCookie('csrftoken');
-
-            // Like functionality
-            document.querySelectorAll('.like-button').forEach(button => {
-                button.addEventListener('click', async function() {
-                    const postId = this.dataset.postId;
-                    const heartIcon = this.querySelector('.heart-icon');
-                    const likeCountSpan = this.querySelector('.like-count');
-                    try {
-                        const response = await fetch(`/posts/post/${postId}/like/`, {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRFToken': csrftoken,
-                                'Content-Type': 'application/json',
-                            },
+            
+            // Infinite Scroll Implementation
+            let isLoading = false;
+            let currentPage = {{ posts.number }};
+            let totalPages = {{ posts.paginator.num_pages }};
+            let loadingMoreElement = document.getElementById('loading-more');
+            let postsContainer = document.getElementById('posts-container');
+            let endOfFeedElement = document.getElementById('end-of-feed');
+            
+            // Function to load more posts
+            async function loadMorePosts() {
+                if (isLoading || currentPage >= totalPages) return;
+                
+                isLoading = true;
+                loadingMoreElement.classList.add('active');
+                
+                try {
+                    const nextPage = currentPage + 1;
+                    const response = await fetch(`?page=${nextPage}`);
+                    const html = await response.text();
+                    
+                    // Parse the returned HTML
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newPosts = doc.querySelectorAll('#posts-container .post-card');
+                    
+                    if (newPosts.length > 0) {
+                        // Append new posts to the container
+                        newPosts.forEach(post => {
+                            postsContainer.appendChild(post.cloneNode(true));
                         });
-                        const data = await response.json();
-                        if (data.success) {
-                            if (data.liked) {
-                                this.classList.add('liked');
-                                heartIcon.classList.add('liked');
-                            } else {
-                                this.classList.remove('liked');
-                                heartIcon.classList.remove('liked');
-                            }
-                            likeCountSpan.textContent = data.like_count;
-                        } else {
-                            console.error('Error toggling like:', data.error);
-                            alert('Error toggling like: ' + data.error);
+                        
+                        // Update current page
+                        currentPage = nextPage;
+                        
+                        // Re-attach event listeners to the new posts
+                        attachEventListeners();
+                        
+                        // Check if we've reached the end
+                        if (currentPage >= totalPages) {
+                            endOfFeedElement.style.display = 'block';
                         }
-                    } catch (error) {
-                        console.error('Network error toggling like:', error);
-                        alert('Network error toggling like. Please try again.');
                     }
+                } catch (error) {
+                    console.error('Error loading more posts:', error);
+                } finally {
+                    isLoading = false;
+                    loadingMoreElement.classList.remove('active');
+                }
+            }
+            
+            // Function to attach event listeners to posts
+            function attachEventListeners() {
+                // Like functionality
+                document.querySelectorAll('.like-button:not(.event-attached)').forEach(button => {
+                    button.classList.add('event-attached');
+                    button.addEventListener('click', async function() {
+                        const postId = this.dataset.postId;
+                        const heartIcon = this.querySelector('.heart-icon');
+                        const likeCountSpan = this.querySelector('.like-count');
+                        try {
+                            const response = await fetch(`/posts/post/${postId}/like/`, {
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRFToken': csrftoken,
+                                    'Content-Type': 'application/json',
+                                },
+                            });
+                            const data = await response.json();
+                            if (data.success) {
+                                if (data.liked) {
+                                    this.classList.add('liked');
+                                    heartIcon.classList.add('liked');
+                                } else {
+                                    this.classList.remove('liked');
+                                    heartIcon.classList.remove('liked');
+                                }
+                                likeCountSpan.textContent = data.like_count;
+                            } else {
+                                console.error('Error toggling like:', data.error);
+                                alert('Error toggling like: ' + data.error);
+                            }
+                        } catch (error) {
+                            console.error('Network error toggling like:', error);
+                            alert('Network error toggling like. Please try again.');
+                        }
+                    });
                 });
+                
+                // Comment button functionality
+                document.querySelectorAll('.comment-button:not(.event-attached)').forEach(button => {
+                    button.classList.add('event-attached');
+                    button.addEventListener('click', function() {
+                        currentPostIdForComments = this.dataset.postId;
+                        commentsModal.style.display = 'block';
+                        loadComments(currentPostIdForComments);
+                    });
+                });
+                
+                // Like count functionality
+                document.querySelectorAll('.like-count:not(.event-attached)').forEach(span => {
+                    span.classList.add('event-attached');
+                    span.addEventListener('click', function() {
+                        currentPostIdForLikers = this.dataset.postId;
+                        likersModal.style.display = 'block';
+                        loadLikers(currentPostIdForLikers);
+                    });
+                });
+                
+                // Bookmark functionality
+                document.querySelectorAll('.bookmark-button:not(.event-attached)').forEach(button => {
+                    button.classList.add('event-attached');
+                    button.addEventListener('click', async function() {
+                        const postId = this.dataset.postId;
+                        const bookmarkIcon = this.querySelector('.bookmark-icon');
+                        const bookmarkText = this.querySelector('.bookmark-text');
+                        try {
+                            const response = await fetch(`/posts/post/${postId}/bookmark/`, {
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRFToken': csrftoken,
+                                    'Content-Type': 'application/json',
+                                },
+                            });
+                            const data = await response.json();
+                            if (data.success) {
+                                if (data.bookmarked) {
+                                    this.classList.add('bookmarked');
+                                    bookmarkIcon.textContent = '✅'; // Filled bookmark icon
+                                    bookmarkText.textContent = 'Saved';
+                                } else {
+                                    this.classList.remove('bookmarked');
+                                    bookmarkIcon.textContent = '🔖'; // Outline bookmark icon
+                                    bookmarkText.textContent = 'Bookmark';
+                                }
+                            } else {
+                                console.error('Error toggling bookmark:', data.error);
+                                alert('Error toggling bookmark: ' + data.error);
+                            }
+                        } catch (error) {
+                            console.error('Network error toggling bookmark:', error);
+                            alert('Network error toggling bookmark. Please try again.');
+                        }
+                    });
+                });
+            }
+            
+            // Attach event listeners to initial posts
+            attachEventListeners();
+            
+            // Infinite scroll detection
+            window.addEventListener('scroll', function() {
+                // Check if we're near the bottom of the page
+                if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500) {
+                    loadMorePosts();
+                }
             });
-
+            
             // Comment modal functionality
             const commentsModal = document.getElementById('commentsModal');
             const commentsCloseBtn = commentsModal.querySelector('.close');
@@ -638,15 +757,7 @@ body{
             const commentSubmit = commentsModal.querySelector('.comment-submit');
             const commentsList = commentsModal.querySelector('.comments-list');
             let currentPostIdForComments = null;
-
-            document.querySelectorAll('.comment-button').forEach(button => {
-                button.addEventListener('click', function() {
-                    currentPostIdForComments = this.dataset.postId;
-                    commentsModal.style.display = 'block';
-                    loadComments(currentPostIdForComments);
-                });
-            });
-
+            
             commentsCloseBtn.addEventListener('click', function() {
                 commentsModal.style.display = 'none';
                 currentPostIdForComments = null;
@@ -654,7 +765,7 @@ body{
                 commentInput.style.height = 'auto';
                 commentSubmit.disabled = true;
             });
-
+            
             window.addEventListener('click', function(event) {
                 if (event.target === commentsModal) {
                     commentsModal.style.display = 'none';
@@ -668,16 +779,16 @@ body{
                     currentPostIdForLikers = null;
                 }
             });
-
+            
             commentInput.addEventListener('input', function() {
                 commentSubmit.disabled = this.value.trim() === '';
             });
-
+            
             commentInput.addEventListener('input', function() {
                 this.style.height = 'auto';
                 this.style.height = Math.min(this.scrollHeight, 100) + 'px';
             });
-
+            
             commentSubmit.addEventListener('click', async function() {
                 const content = commentInput.value.trim();
                 if (!content || !currentPostIdForComments) return;
@@ -713,7 +824,7 @@ body{
                     this.textContent = 'Post';
                 }
             });
-
+            
             async function loadComments(postId) {
                 commentsList.innerHTML = '<div class="loading">Loading comments...</div>';
                 try {
@@ -729,7 +840,7 @@ body{
                     commentsList.innerHTML = '<div class="no-comments">Error loading comments. Please try again.</div>';
                 }
             }
-
+            
             function displayComments(comments) {
                 if (comments.length === 0) {
                     commentsList.innerHTML = '<div class="no-comments">No comments yet. Be the first to comment!</div>';
@@ -740,7 +851,7 @@ body{
                     addCommentToList(comment);
                 });
             }
-
+            
             function addCommentToList(comment) {
                 const commentElement = document.createElement('div');
                 commentElement.className = 'comment-item';
@@ -766,26 +877,18 @@ body{
                     commentsList.appendChild(commentElement);
                 }
             }
-
+            
             // Likers modal functionality
             const likersModal = document.getElementById('likersModal');
             const likersCloseBtn = likersModal.querySelector('.close');
             const likersList = likersModal.querySelector('.likers-list');
             let currentPostIdForLikers = null;
-
-            document.querySelectorAll('.like-count').forEach(span => {
-                span.addEventListener('click', function() {
-                    currentPostIdForLikers = this.dataset.postId;
-                    likersModal.style.display = 'block';
-                    loadLikers(currentPostIdForLikers);
-                });
-            });
-
+            
             likersCloseBtn.addEventListener('click', function() {
                 likersModal.style.display = 'none';
                 currentPostIdForLikers = null;
             });
-
+            
             async function loadLikers(postId) {
                 likersList.innerHTML = '<div class="loading">Loading likers...</div>';
                 try {
@@ -801,7 +904,7 @@ body{
                     likersList.innerHTML = '<div class="no-likers">Error loading likers. Please try again.</div>';
                 }
             }
-
+            
             function displayLikers(likers) {
                 if (likers.length === 0) {
                     likersList.innerHTML = '<div class="no-likers">No likes yet.</div>';
@@ -825,44 +928,5 @@ body{
                     likersList.appendChild(likerElement);
                 });
             }
-
-            // NEW: Bookmark functionality
-            document.querySelectorAll('.bookmark-button').forEach(button => {
-                button.addEventListener('click', async function() {
-                    const postId = this.dataset.postId;
-                    const bookmarkIcon = this.querySelector('.bookmark-icon');
-                    const bookmarkText = this.querySelector('.bookmark-text');
-
-                    try {
-                        const response = await fetch(`/posts/post/${postId}/bookmark/`, {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRFToken': csrftoken,
-                                'Content-Type': 'application/json',
-                            },
-                        });
-
-                        const data = await response.json();
-
-                        if (data.success) {
-                            if (data.bookmarked) {
-                                this.classList.add('bookmarked');
-                                bookmarkIcon.textContent = '✅'; // Filled bookmark icon
-                                bookmarkText.textContent = 'Saved';
-                            } else {
-                                this.classList.remove('bookmarked');
-                                bookmarkIcon.textContent = '🔖'; // Outline bookmark icon
-                                bookmarkText.textContent = 'Bookmark';
-                            }
-                        } else {
-                            console.error('Error toggling bookmark:', data.error);
-                            alert('Error toggling bookmark: ' + data.error);
-                        }
-                    } catch (error) {
-                        console.error('Network error toggling bookmark:', error);
-                        alert('Network error toggling bookmark. Please try again.');
-                    }
-                });
-            });
         </script>
 {% endblock %}

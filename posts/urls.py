@@ -6,7 +6,7 @@ urlpatterns = [
     path('create/', views.create_post, name='create_post'),
    
     path('feed/', views.feed_view, name='feed'),
-    path('your_feed/', views.your_feed, name='your_feed'),
+    path('my_feed/', views.my_feed, name='my_feed'),
     path('post/delete/<int:post_id>/', views.delete_post, name='delete_post'),
     path('edit-post/<int:post_id>/', views.edit_post, name='edit_post'),
 
@@ -23,6 +23,8 @@ urlpatterns = [
 
     path('linkedin_config/',views.linkedin_config,name='linkedin_config'),
     path('facebook_instagram_config/',views.facebook_instagram_config,name='facebook_instagram_config'),
+
+    
     path('post/<int:post_id>/share/instagram/', views.post_to_instagram, name='post_to_instagram'),
 
 

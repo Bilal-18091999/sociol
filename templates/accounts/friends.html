@@ -3,26 +3,47 @@
 {% block content %}
 
 <style>
-
     .bg-red-500 {
-            --tw-bg-opacity: 1;
-            background-color: rgb(239 68 68 / var(--tw-bg-opacity, 1));
-            border-radius: 10px;
-            color: white;
-            text-decoration: none;
-            padding: 2px;
-            position: absolute;
-            font-size: 12px;
-        }
-.bg-red-500 {
-            position: absolute;
-            top: 4px;
-            right: 18px;
-            z-index: 10;
-        }
-
-    </style>
-
+        --tw-bg-opacity: 1;
+        background-color: rgb(239 68 68 / var(--tw-bg-opacity, 1));
+        border-radius: 10px;
+        color: white;
+        text-decoration: none;
+        padding: 2px;
+        position: absolute;
+        font-size: 12px;
+    }
+    
+    .bg-red-500 {
+        position: absolute;
+        top: 4px;
+        right: 18px;
+        z-index: 10;
+    }
+    
+    /* Style for search boxes in all tabs */
+    .search-container {
+        margin-bottom: 20px;
+    }
+    
+    .discover-search {
+        width: 100%;
+        padding: 10px 15px;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 14px;
+    }
+    
+    .person-card {
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .person-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+</style>
 
 <div class="container">
     <div class="page-header">
@@ -44,13 +65,25 @@
         <!-- Friends Tab -->
         <div id="friends" class="tab-pane {% if active_tab == 'friends' %}active{% endif %}">
             <h2 class="discover-title">Your Friends</h2>
-            <div class="people-grid">
+            <div class="search-container">
+                <input type="text" class="discover-search" placeholder="Search for people..." onkeyup="searchPeople(this, 'friends')">
+            </div>
+
+            <div class="people-grid" id="friends-grid">
                 {% for user in friends %}
-                <div class="person-card">
-                    <div class="person-avatar">{{ user.username|first|upper }}</div>
+                <div class="person-card" data-name="{{ user.username }}" data-username="{{ user.mail }}" onclick="window.location.href='{% url 'user_profile' user.id %}'">
+                    <div class="profile-avatar">
+                        <div class="avatar-circle" id="avatar-display">
+                            {% if user.profile_photo %}
+                                <img src="{{ user.profile_photo.url }}" alt="Profile Photo" id="avatar-img">
+                            {% else %}
+                                <span id="avatar-letter">{{ user.username|slice:":1"|upper }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
                     <div class="person-info">
                         <div class="person-name">{{ user.username }}</div>
-                        <div class="person-email">@{{ user.mail }}</div>
+                        <div class="person-email">@{{ user.first_name }}</div>
                     </div>
                     <div class="status-badge" style="background:#10b981;">Friend</div>
                 </div>
@@ -62,13 +95,25 @@
         <!-- Requests Tab -->
         <div id="requests" class="tab-pane {% if active_tab == 'requests' %}active{% endif %}">
             <h2 class="discover-title">Friend Requests</h2>
-            <div class="people-grid">
+            <div class="search-container">
+                <input type="text" class="discover-search" placeholder="Search for people..." onkeyup="searchPeople(this, 'requests')">
+            </div>
+
+            <div class="people-grid" id="requests-grid">
                 {% for user in received_requests %}
-                <div class="person-card">
-                    <div class="person-avatar">{{ user.username|first|upper }}</div>
+                <div class="person-card" data-name="{{ user.username }}" data-username="{{ user.mail }}" onclick="window.location.href='{% url 'user_profile' user.id %}'">
+                    <div class="profile-avatar">
+                        <div class="avatar-circle" id="avatar-display">
+                            {% if user.profile_photo %}
+                                <img src="{{ user.profile_photo.url }}" alt="Profile Photo" id="avatar-img">
+                            {% else %}
+                                <span id="avatar-letter">{{ user.username|slice:":1"|upper }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
                     <div class="person-info">
                         <div class="person-name">{{ user.username }}</div>
-                        <div class="person-email">@{{ user.mail }}</div>
+                        <div class="person-email">@{{ user.first_name }}</div>
                     </div>
                     <div class="button-group">
                         <form method="post" action="{% url 'accept_request' user.id %}" class="tab-aware-form">
@@ -91,13 +136,24 @@
         <!-- Sent Tab -->
         <div id="sent" class="tab-pane {% if active_tab == 'sent' %}active{% endif %}">
             <h2 class="discover-title">Sent Requests</h2>
-            <div class="people-grid">
+            <div class="search-container">
+                <input type="text" class="discover-search" placeholder="Search for people..." onkeyup="searchPeople(this, 'sent')">
+            </div>
+            <div class="people-grid" id="sent-grid">
                 {% for user in sent_requests %}
-                <div class="person-card">
-                    <div class="person-avatar">{{ user.username|first|upper }}</div>
+                <div class="person-card" data-name="{{ user.username }}" data-username="{{ user.email }}" onclick="window.location.href='{% url 'user_profile' user.id %}'">
+                    <div class="profile-avatar">
+                        <div class="avatar-circle" id="avatar-display">
+                            {% if user.profile_photo %}
+                                <img src="{{ user.profile_photo.url }}" alt="Profile Photo" id="avatar-img">
+                            {% else %}
+                                <span id="avatar-letter">{{ user.username|slice:":1"|upper }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
                     <div class="person-info">
                         <div class="person-name">{{ user.username }}</div>
-                        <div class="person-email">@{{ user.email }}</div>
+                        <div class="person-email">@{{ user.first_name }}</div>
                     </div>
                     <div class="status-badge" style="background:#f59e0b;">Request Sent</div>
                 </div>
@@ -109,14 +165,24 @@
         <!-- Discover Tab -->
         <div id="discover" class="tab-pane {% if active_tab == 'discover' %}active{% endif %}">
             <h2 class="discover-title">Discover People</h2>
-            <input type="text" class="discover-search" placeholder="Search for people..." onkeyup="searchPeople(this)">
+            <div class="search-container">
+                <input type="text" class="discover-search" placeholder="Search for people..." onkeyup="searchPeople(this, 'discover')">
+            </div>
             <div class="people-grid" id="discover-grid">
                 {% for user in discover_users %}
-                <div class="person-card" data-name="{{ user.username }}" data-username="{{ user.username }}">
-                    <div class="person-avatar">{{ user.username|first|upper }}</div>
+                <div class="person-card" data-name="{{ user.username }}" data-username="{{ user.email }}" onclick="window.location.href='{% url 'user_profile' user.id %}'">
+                    <div class="profile-avatar">
+                        <div class="avatar-circle" id="avatar-display">
+                            {% if user.profile_photo %}
+                                <img src="{{ user.profile_photo.url }}" alt="Profile Photo" id="avatar-img">
+                            {% else %}
+                                <span id="avatar-letter">{{ user.username|slice:":1"|upper }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
                     <div class="person-info">
                         <div class="person-name">{{ user.username }}</div>
-                        <div class="person-email">@{{ user.email }}</div>
+                        <div class="person-email">@{{ user.first_name }}</div>
                     </div>
                     <form method="post" action="{% url 'send_request' user.id %}" class="tab-aware-form">
                         {% csrf_token %}
@@ -188,10 +254,11 @@
         });
     });
 
-    // Search functionality (existing)
-    function searchPeople(input) {
+    // Updated search functionality for all tabs
+    function searchPeople(input, tabId) {
         const searchTerm = input.value.toLowerCase();
-        const personCards = document.querySelectorAll('#discover-grid .person-card');
+        const gridId = tabId + '-grid';
+        const personCards = document.querySelectorAll(`#${gridId} .person-card`);
 
         personCards.forEach(card => {
             const name = card.getAttribute('data-name').toLowerCase();
